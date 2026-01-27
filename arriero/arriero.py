@@ -1,9 +1,9 @@
+from __future__ import annotations
 from time import sleep
 import time
 import threading
 from observatory.errors import StateError
 
-from __future__ import annotations
 from typing import Callable, Generic, TypeVar
 
 TAlpaca = TypeVar("TAlpaca")
@@ -35,7 +35,7 @@ class Arriero(Generic[TAlpaca]):
 
     def create(self):
         if self._thread and self._thread.is_alive():
-            return self.alpaca
+            return self._alpaca
         
         try:
             self._alpaca = self._factory()
@@ -45,7 +45,7 @@ class Arriero(Generic[TAlpaca]):
         self._stop.clear()
         self._thread = threading.Thread(target=self._run, name=f"Arriero-{self.name}", daemon=True)
         self._thread.start()
-        return self.alpaca
+        return self._alpaca
     
     def destroy(self, join_timeout: float = 2):
         self._stop.set()

@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from observatory.state import StateManager
 
-def observing_conditions_updater(oc, state: "StateManager" = None):
+def observing_conditions_updater(oc, name, state: "StateManager" = None):
     if not oc.alpaca.Connected:
         raise ConnectionError("Observing conditions not connected")
     
@@ -23,7 +23,7 @@ def observing_conditions_updater(oc, state: "StateManager" = None):
     )
 
 
-def safety_monitor_updater(sm, state: "StateManager" = None):
+def safety_monitor_updater(sm, name, state: "StateManager" = None):
     if not sm.alpaca.Connected:
         raise ConnectionError("Safety monitor not connected")
     

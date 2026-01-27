@@ -13,7 +13,7 @@ def filterwheel_factory(
         address: str,
         name: str,
         device_number: int = 0,
-        state: "StateManager" | None = None,
+        state: "StateManager" = None,
     ) -> filterwheel.FilterWheel:
     try:
         print("connecting to filter wheel", name, address)

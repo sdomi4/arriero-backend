@@ -1,0 +1,74 @@
+---
+
+devices:
+  - id: "sim_dome"
+    type: "dome"
+    name: "Alpaca Simulator Dome"
+    auto_connect: false
+    poll_time: 2
+    host: "127.0.0.1"
+    port: 32323
+    device_number: 0
+
+  - id: "sim_telescope"
+    type: "telescope"
+    name: "Alpaca Simulator Telescope"
+    auto_connect: false
+    poll_time: 2
+    host: "127.0.0.1"
+    port: 32323
+    device_number: 0
+
+  - id: "sim_camera"
+    type: "camera"
+    name: "Alpaca Simulator Camera"
+    auto_connect: false
+    poll_time: 2
+    host: "127.0.0.1"
+    port: 32323
+    device_number: 0
+
+  - id: "sim_conditions"
+    type: "observing_conditions"
+    name: "Alpaca Simulator Observing Conditions"
+    auto_connect: true
+    poll_time: 5
+    host: "127.0.0.1"
+    port: 32323
+    device_number: 0
+
+  - id: "sim_safety"
+    type: "safety_monitor"
+    name: "Alpaca Simulator Safety Monitor"
+    auto_connect: true
+    poll_time: 5
+    host: "127.0.0.1"
+    port: 32323
+    device_number: 0
+
+  - id: "sim_cover"
+    type: "cover"
+    name: "Alpaca Simulator Cover"
+    auto_connect: false
+    poll_time: 2
+    host: "127.0.0.1"
+    port: 32323
+    device_number: 0
+
+  - id: "sim_filterwheel"
+    type: "filterwheel"
+    name: "Alpaca Simulator Filter Wheel"
+    auto_connect: false
+    poll_time: 2
+    host: "127.0.0.1"
+    port: 32323
+    device_number: 0
+
+  - id: "sim_switch"
+    type: "switch"
+    name: "Alpaca Simulator Switch"
+    auto_connect: false
+    poll_time: 2
+    host: "127.0.0.1"
+    port: 32323
+    device_number: 0

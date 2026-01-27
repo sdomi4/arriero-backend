@@ -12,7 +12,7 @@ def camera_factory(
         address: str,
         name: str,
         device_number: int = 0,
-        state: "StateManager" | None = None,
+        state: "StateManager" = None,
     ) -> camera.Camera:
     try:
         print("connecting to camera", name, address)

@@ -14,7 +14,7 @@ def cover_factory(
         address: str,
         name: str,
         device_number: int = 0,
-        state: "StateManager" | None = None,
+        state: "StateManager" = None,
     ) -> covercalibrator.CoverCalibrator:
     try:
         print("connecting to cover", name, address)

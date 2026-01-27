@@ -16,7 +16,7 @@ def observing_conditions_factory(
         address: str,
         name: str,
         device_number: int = 0,
-        state: "StateManager" | None = None,
+        state: "StateManager" = None,
     ) -> observingconditions.ObservingConditions:
     try:
 
@@ -53,7 +53,7 @@ def safety_monitor_factory(
         address: str,
         name: str,
         device_number: int = 0,
-        state: "StateManager" | None = None,
+        state: "StateManager" = None,
     ) -> safetymonitor.SafetyMonitor:
     try:
         print("connecting to", name, "at", address)

@@ -13,7 +13,7 @@ def dome_factory(
         address: str,
         name: str,
         device_number: int = 0,
-        state: "StateManager" | None = None,
+        state: "StateManager" = None,
     ) -> dome.Dome:
     try:
         print("connecting to dome", name, address)

@@ -13,7 +13,7 @@ def telescope_factory(
         address: str,
         name: str,
         device_number: int = 0,
-        state: "StateManager" | None = None,
+        state: "StateManager" = None,
     ) -> telescope.Telescope:
     try:
         print("connecting to telescope", name, address)
