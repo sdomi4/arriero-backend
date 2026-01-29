@@ -1,17 +1,25 @@
 from typing import TYPE_CHECKING
+from observatory.state import StateManager, SwitchState, ToggleControl, RangeControl
+from observatory.devices.switch import ArrieroSwitch
 
 if TYPE_CHECKING:
     from observatory.state import StateManager
 
-def switch_updater(switch, name, state: "StateManager" = None):
-    if not switch.alpaca.Connected:
-        raise ConnectionError(f"Switch {name} not connected")
+def switch_updater(switch_device: "ArrieroSwitch", name, state: "StateManager" = None):
+    if not switch_device.alpaca.Connected:
+        raise ConnectionError("Switch not connected")
     
-    switch_dict = {
-        "status": "connected",
-        "switch": {}
-    }
-    for i in range(0, switch.alpaca.MaxSwitch):
-        switch_dict["switch"][i] = switch.alpaca.GetSwitch(i)
+    try:
+        device = state.get_device(name)
+        device.connected = switch_device.alpaca.Connected
+        
+        # Update each control
+        for control_name, control in device.controls.items():
+            if isinstance(control, ToggleControl):
+                control.value = switch_device.alpaca.GetSwitch(control.id)
+            elif isinstance(control, RangeControl):
+                control.value = switch_device.alpaca.GetSwitchValue(control.id)
 
-    state.update_key("switches", {name: switch_dict})
+        state.update_device(device)
+    except Exception as e:
+        print(f"Error updating switch state: {e}")

@@ -107,7 +107,7 @@ class StateManager:
         with self._lock:
             if device_id not in self._snapshot.devices:
                 raise ValueError(f"Device with id {device_id} does not exist.")
-            del self._snapshot.devices.pop(device_id, None)
+            self._snapshot.devices.pop(device_id, None)
         
     def get_device(self, device_id: str) -> DeviceState:
         with self._lock:
@@ -115,6 +115,12 @@ class StateManager:
                 return self._snapshot.devices[device_id]
             except KeyError:
                 raise ValueError(f"Device with id {device_id} does not exist.")
+            
+    def update_device(self, device: DeviceState):
+        with self._lock:
+            if device.id not in self._snapshot.devices:
+                raise ValueError(f"Device with id {device.id} does not exist.")
+            self._snapshot.devices[device.id] = device
             
     def add_action(self, text: str):
         with self._lock:

@@ -4,9 +4,9 @@ from observatory.devices.camera import ArrieroCamera
 from arriero.factories.camera import camera_factory
 from arriero.updaters.camera import camera_updater
 
-from observatory.devices.conditions import ArrieroObservingConditions
-from arriero.factories.conditions import observing_conditions_factory
-from arriero.updaters.conditions import observing_conditions_updater
+from observatory.devices.observing_conditions import ArrieroObservingConditions
+from arriero.factories.observing_conditions import observing_conditions_factory
+from arriero.updaters.observing_conditions import observing_conditions_updater
 
 from observatory.devices.cover import ArrieroCover
 from arriero.factories.cover import cover_factory
@@ -16,9 +16,9 @@ from observatory.devices.filterwheel import ArrieroFilterWheel
 from arriero.factories.filterwheel import filterwheel_factory
 from arriero.updaters.filterwheel import filterwheel_updater
 
-from observatory.devices.safety import ArrieroSafetyMonitor
-from arriero.factories.conditions import safety_monitor_factory
-from arriero.updaters.conditions import safety_monitor_updater
+from observatory.devices.safety_monitor import ArrieroSafetyMonitor
+from arriero.factories.safety_monitor import safety_monitor_factory
+from arriero.updaters.safety_monitor import safety_monitor_updater
 
 from observatory.devices.dome import ArrieroDome
 from arriero.factories.dome import dome_factory
@@ -73,15 +73,15 @@ class Observatory:
             if device_type == "dome":
                 device_arriero = ArrieroDome(
                     observatory=self,
-                    factory=lambda: dome_factory(
-                        address=f"{host}:{port}",
-                        name=name,
-                        device_number=device_number,
+                    factory=lambda h=host, p=port, n=name, dn=device_number: dome_factory(
+                        address=f"{h}:{p}",
+                        name=n,
+                        device_number=dn,
                         state=self.state
                     ),
-                    updater=lambda: dome_updater(
-                        dome=self.domes[device_id],
-                        name=name,
+                    updater=lambda did=device_id, n=name: dome_updater(
+                        dome=self.domes[did],
+                        name=n,
                         state=self.state
                     ),
                     poll_time=poll_time,
@@ -91,15 +91,15 @@ class Observatory:
             elif device_type == "telescope":
                 device_arriero = ArrieroTelescope(
                     observatory=self,
-                    factory=lambda: telescope_factory(
-                        address=f"{host}:{port}",
-                        name=name,
-                        device_number=device_number,
+                    factory=lambda h=host, p=port, n=name, dn=device_number: telescope_factory(
+                        address=f"{h}:{p}",
+                        name=n,
+                        device_number=dn,
                         state=self.state
                     ),
-                    updater=lambda: telescope_updater(
-                        telescope=self.telescopes[device_id],
-                        name=name,
+                    updater=lambda did=device_id, n=name: telescope_updater(
+                        telescope=self.telescopes[did],
+                        name=n,
                         state=self.state
                     ),
                     poll_time=poll_time,
@@ -109,15 +109,15 @@ class Observatory:
             elif device_type == "camera":
                 device_arriero = ArrieroCamera(
                     observatory=self,
-                    factory=lambda: camera_factory(
-                        address=f"{host}:{port}",
-                        name=name,
-                        device_number=device_number,
+                    factory=lambda h=host, p=port, n=name, dn=device_number: camera_factory(
+                        address=f"{h}:{p}",
+                        name=n,
+                        device_number=dn,
                         state=self.state
                     ),
-                    updater=lambda: camera_updater(
-                        camera=self.cameras[device_id],
-                        name=name,
+                    updater=lambda did=device_id, n=name: camera_updater(
+                        camera=self.cameras[did],
+                        name=n,
                         state=self.state
                     ),
                     poll_time=poll_time,
@@ -127,15 +127,15 @@ class Observatory:
             elif device_type == "observing_conditions":
                 device_arriero = ArrieroObservingConditions(
                     observatory=self,
-                    factory=lambda: observing_conditions_factory(
-                        address=f"{host}:{port}",
-                        name=name,
-                        device_number=device_number,
+                    factory=lambda h=host, p=port, n=name, dn=device_number: observing_conditions_factory(
+                        address=f"{h}:{p}",
+                        name=n,
+                        device_number=dn,
                         state=self.state
                     ),
-                    updater=lambda: observing_conditions_updater(
-                        oc=self.observing_conditions[device_id],
-                        name=name,
+                    updater=lambda did=device_id, n=name: observing_conditions_updater(
+                        observing_conditions=self.observing_conditions[did],
+                        name=n,
                         state=self.state
                     ),
                     poll_time=poll_time,
@@ -145,15 +145,15 @@ class Observatory:
             elif device_type == "safety_monitor":
                 device_arriero = ArrieroSafetyMonitor(
                     observatory=self,
-                    factory=lambda: safety_monitor_factory(
-                        address=f"{host}:{port}",
-                        name=name,
-                        device_number=device_number,
+                    factory=lambda h=host, p=port, n=name, dn=device_number: safety_monitor_factory(
+                        address=f"{h}:{p}",
+                        name=n,
+                        device_number=dn,
                         state=self.state
                     ),
-                    updater=lambda: safety_monitor_updater(
-                        sm=self.safety_monitors[device_id],
-                        name=name,
+                    updater=lambda did=device_id, n=name: safety_monitor_updater(
+                        safety_monitor=self.safety_monitors[did],
+                        name=n,
                         state=self.state
                     ),
                     poll_time=poll_time,
@@ -163,15 +163,15 @@ class Observatory:
             elif device_type == "cover":
                 device_arriero = ArrieroCover(
                     observatory=self,
-                    factory=lambda: cover_factory(
-                        address=f"{host}:{port}",
-                        name=name,
-                        device_number=device_number,
+                    factory=lambda h=host, p=port, n=name, dn=device_number: cover_factory(
+                        address=f"{h}:{p}",
+                        name=n,
+                        device_number=dn,
                         state=self.state
                     ),
-                    updater=lambda: cover_updater(
-                        cover=self.covers[device_id],
-                        name=name,
+                    updater=lambda did=device_id, n=name: cover_updater(
+                        cover=self.covers[did],
+                        name=n,
                         state=self.state
                     ),
                     poll_time=poll_time,
@@ -181,15 +181,15 @@ class Observatory:
             elif device_type == "filterwheel":
                 device_arriero = ArrieroFilterWheel(
                     observatory=self,
-                    factory=lambda: filterwheel_factory(
-                        address=f"{host}:{port}",
-                        name=name,
-                        device_number=device_number,
+                    factory=lambda h=host, p=port, n=name, dn=device_number: filterwheel_factory(
+                        address=f"{h}:{p}",
+                        name=n,
+                        device_number=dn,
                         state=self.state
                     ),
-                    updater=lambda: filterwheel_updater(
-                        filterwheel=self.filterwheels[device_id],
-                        name=name,
+                    updater=lambda did=device_id, n=name: filterwheel_updater(
+                        filterwheel=self.filterwheels[did],
+                        name=n,
                         state=self.state
                     ),
                     poll_time=poll_time,
@@ -199,15 +199,15 @@ class Observatory:
             elif device_type == "switch":
                 device_arriero = ArrieroSwitch(
                     observatory=self,
-                    factory=lambda: switch_factory(
-                        address=f"{host}:{port}",
-                        name=name,
-                        device_number=device_number,
+                    factory=lambda h=host, p=port, n=name, dn=device_number: switch_factory(
+                        address=f"{h}:{p}",
+                        name=n,
+                        device_number=dn,
                         state=self.state
                     ),
-                    updater=lambda: switch_updater(
-                        switch=self.switches[device_id],
-                        name=name,
+                    updater=lambda did=device_id, n=name: switch_updater(
+                        switch_device=self.switches[did],
+                        name=n,
                         state=self.state
                     ),
                     poll_time=poll_time,
@@ -223,4 +223,3 @@ class Observatory:
                 device_arriero.connect()
         # Start observatory loops
         pass
-        

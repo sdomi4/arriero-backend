@@ -5,6 +5,7 @@ import threading
 from observatory.errors import StateError
 
 from typing import Callable, Generic, TypeVar
+import traceback
 
 TAlpaca = TypeVar("TAlpaca")
 
@@ -79,6 +80,7 @@ class Arriero(Generic[TAlpaca]):
                 self._sleep_coop(self._poll_time)
             except Exception as e:
                 print(f"Error in Alpaca updater: {e}")
+                traceback.print_exc()
                 self._alpaca = None
                 healthy = False
                 self._sleep_coop(self._backoff)

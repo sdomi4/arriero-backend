@@ -1,13 +1,11 @@
 from alpaca import dome
 from time import sleep
 
-from typing import TYPE_CHECKING
+from observatory.state import StateManager, DomeState
 
 class DomeConnectionError(RuntimeError):
     pass
 
-if TYPE_CHECKING:
-    from observatory.state import StateManager
 
 def dome_factory(
         address: str,
@@ -24,12 +22,10 @@ def dome_factory(
                 timeout += 1
                 if timeout > 10:
                     print("Dome connection timed out")
-                    state.update_key("dome", {name: {"connected": False, "status": "unknown"}})
                     raise DomeConnectionError("Dome connection timed out")
                 sleep(1)
-        state.update_key("dome", {name: {"connected": True, "status": d.ShutterStatus}})
+        state.add_device(DomeState(id=name, connected=True, status=d.ShutterStatus))
         return d
     except Exception as e:
         print(f"Error connecting to dome: {e}")
-        state.update_key("dome", {name: {"connected": False, "status": "unknown"}})
         raise DomeConnectionError(f"Error connecting to dome: {e}")

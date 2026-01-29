@@ -1,14 +1,18 @@
-from typing import TYPE_CHECKING
+from observatory.state import StateManager, DomeState
+from observatory.devices.dome import ArrieroDome
 
-if TYPE_CHECKING:
-    from observatory.state import StateManager
-
-def dome_updater(dome, name, state: "StateManager" = None):
+def dome_updater(dome: "ArrieroDome", name, state: "StateManager" = None):
     if not dome.alpaca.Connected:
         raise ConnectionError("Dome not connected")
     
-    status = dome.alpaca.ShutterStatus
-    if status != state._state["dome"]["status"]:
-        state.update_key("dome", {name: {"status": status}})
-        if status == 4: # Error
+    try:
+        device = state.get_device(name)
+        device.connected = dome.alpaca.Connected
+        device.shutter_status = dome.alpaca.ShutterStatus
+
+        if device.shutter_status == 4:
             print("Dome reported an error")
+
+        state.update_device(device)
+    except Exception as e:
+        print(f"Error updating dome state: {e}")

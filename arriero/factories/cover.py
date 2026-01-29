@@ -1,14 +1,11 @@
-
-from time import sleep
 from alpaca import covercalibrator
+from time import sleep
 
-from typing import TYPE_CHECKING
+from observatory.state import StateManager, CoverState
 
 class CoverConnectionError(RuntimeError):
     pass
 
-if TYPE_CHECKING:
-    from observatory.state import StateManager
 
 def cover_factory(
         address: str,
@@ -17,21 +14,18 @@ def cover_factory(
         state: "StateManager" = None,
     ) -> covercalibrator.CoverCalibrator:
     try:
-        print("connecting to cover", name, address)
-        cc = covercalibrator.CoverCalibrator(address, device_number)
-        
+        print("connecting to cover calibrator", name, address)
+        c = covercalibrator.CoverCalibrator(address, device_number)
         timeout = 0
-        cc.Connected = True
-        while cc.Connecting:
-            timeout += 1
-            if timeout > 10:
-                print(f"Cover {name} connection timed out")
-                state.update_key("covers", {name: {"connected": False, "status": "unknown"}})
-                raise CoverConnectionError(f"Cover {name} connection timed out")
-            sleep(1)
-        state.update_key("covers", {name: {"connected": True, "status": cc.CoverState}})
-        return cc
+        c.Connect()
+        while c.Connecting:
+                timeout += 1
+                if timeout > 10:
+                    print("Cover calibrator connection timed out")
+                    raise CoverConnectionError("Cover calibrator connection timed out")
+                sleep(1)
+        state.add_device(CoverState(id=name, connected=True))
+        return c
     except Exception as e:
-        print(f"Error connecting to cover {name}: {e}")
-        state.update_key("covers", {name: {"connected": False, "status": "unknown"}})
-        raise CoverConnectionError(f"Error connecting to cover {name}: {e}")
+        print(f"Error connecting to cover calibrator: {e}")
+        raise CoverConnectionError(f"Error connecting to cover calibrator: {e}")
