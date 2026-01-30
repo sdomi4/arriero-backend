@@ -1,12 +1,12 @@
 from observatory.state import StateManager, ObservingConditionsState
 from observatory.devices.observing_conditions import ArrieroObservingConditions
 
-def observing_conditions_updater(observing_conditions: "ArrieroObservingConditions", name, state: "StateManager" = None):
+def observing_conditions_updater(observing_conditions: "ArrieroObservingConditions", id, state: "StateManager" = None):
     if not observing_conditions.alpaca.Connected:
         raise ConnectionError("Observing conditions not connected")
     
     try:
-        device = state.get_device(name)
+        device = state.get_device(id)
         device.connected = observing_conditions.alpaca.Connected
         device.sky_ambient = observing_conditions.alpaca.SkyTemperature - observing_conditions.alpaca.Temperature
         device.ambient = observing_conditions.alpaca.Temperature
@@ -17,6 +17,5 @@ def observing_conditions_updater(observing_conditions: "ArrieroObservingConditio
         device.pressure = observing_conditions.alpaca.Pressure
         device.daylight = observing_conditions.alpaca.SkyBrightness
 
-        state.update_device(device)
     except Exception as e:
         print(f"Error updating observing conditions state: {e}")

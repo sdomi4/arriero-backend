@@ -9,12 +9,12 @@ class SwitchConnectionError(RuntimeError):
 
 def switch_factory(
         address: str,
-        name: str,
+        id: str,
         device_number: int = 0,
         state: "StateManager" = None,
     ) -> switch.Switch:
     try:
-        print("connecting to switch", name, address)
+        print("connecting to switch", id, address)
         s = switch.Switch(address, device_number)
         timeout = 0
         s.Connect()
@@ -57,7 +57,7 @@ def switch_factory(
                     value=value
                 )
         
-        state.add_device(SwitchState(id=name, connected=True, controls=controls))
+        state.add_device(SwitchState(id=id, connected=True, controls=controls))
         return s
     except Exception as e:
         print(f"Error connecting to switch: {e}")

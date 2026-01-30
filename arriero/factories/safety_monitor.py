@@ -9,12 +9,12 @@ class SafetyMonitorConnectionError(RuntimeError):
 
 def safety_monitor_factory(
         address: str,
-        name: str,
+        id: str,
         device_number: int = 0,
         state: "StateManager" = None,
     ) -> safetymonitor.SafetyMonitor:
     try:
-        print("connecting to safety monitor", name, address)
+        print("connecting to safety monitor", id, address)
         sm = safetymonitor.SafetyMonitor(address, device_number)
         timeout = 0
         sm.Connect()
@@ -24,7 +24,7 @@ def safety_monitor_factory(
                     print("Safety monitor connection timed out")
                     raise SafetyMonitorConnectionError("Safety monitor connection timed out")
                 sleep(1)
-        state.add_device(SafetyMonitorState(id=name, connected=True))
+        state.add_device(SafetyMonitorState(id=id, connected=True))
         return sm
     except Exception as e:
         print(f"Error connecting to safety monitor: {e}")

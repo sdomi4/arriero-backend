@@ -9,12 +9,12 @@ class CoverConnectionError(RuntimeError):
 
 def cover_factory(
         address: str,
-        name: str,
+        id: str,
         device_number: int = 0,
         state: "StateManager" = None,
     ) -> covercalibrator.CoverCalibrator:
     try:
-        print("connecting to cover calibrator", name, address)
+        print("connecting to cover calibrator", id, address)
         c = covercalibrator.CoverCalibrator(address, device_number)
         timeout = 0
         c.Connect()
@@ -24,7 +24,7 @@ def cover_factory(
                     print("Cover calibrator connection timed out")
                     raise CoverConnectionError("Cover calibrator connection timed out")
                 sleep(1)
-        state.add_device(CoverState(id=name, connected=True))
+        state.add_device(CoverState(id=id, connected=True))
         return c
     except Exception as e:
         print(f"Error connecting to cover calibrator: {e}")

@@ -9,12 +9,12 @@ class TelescopeConnectionError(RuntimeError):
 
 def telescope_factory(
         address: str,
-        name: str,
+        id: str,
         device_number: int = 0,
         state: "StateManager" = None,
     ) -> telescope.Telescope:
     try:
-        print("connecting to telescope", name, address)
+        print("connecting to telescope", id, address)
         t = telescope.Telescope(address, device_number)
         timeout = 0
         t.Connect()
@@ -24,7 +24,7 @@ def telescope_factory(
                     print("Telescope connection timed out")
                     raise TelescopeConnectionError("Telescope connection timed out")
                 sleep(1)
-        state.add_device(TelescopeState(id=name, connected=True))
+        state.add_device(TelescopeState(id=id, connected=True))
         return t
     except Exception as e:
         print(f"Error connecting to telescope: {e}")

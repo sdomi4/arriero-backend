@@ -5,12 +5,12 @@ from observatory.devices.telescope import ArrieroTelescope
 if TYPE_CHECKING:
     from observatory.state import StateManager
 
-def telescope_updater(telescope: "ArrieroTelescope", name, state: "StateManager" = None):
+def telescope_updater(telescope: "ArrieroTelescope", id, state: "StateManager" = None):
     if not telescope.alpaca.Connected:
         raise ConnectionError("Telescope not connected")
     
     try:
-        device = state.get_device(name)
+        device = state.get_device(id)
         device.connected = telescope.alpaca.Connected
         device.tracking = telescope.alpaca.Tracking
         device.slewing = telescope.alpaca.Slewing
@@ -23,7 +23,5 @@ def telescope_updater(telescope: "ArrieroTelescope", name, state: "StateManager"
                 "ra": telescope.alpaca.TargetRightAscension,
                 "dec": telescope.alpaca.TargetDeclination
             }
-
-        state.update_device(device)
     except Exception as e:
         print(f"Error updating telescope state: {e}")

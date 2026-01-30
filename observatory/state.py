@@ -82,8 +82,29 @@ class SwitchState(BaseDeviceState):
     device_type: Literal["switch"] = "switch"
     controls: Dict[str, SwitchControlState] = Field(default_factory=dict)
 
+class CameraState(BaseDeviceState):
+    device_type: Literal["camera"] = "camera"
+    bin_x: Optional[int] = 1
+    bin_y: Optional[int] = 1
+    ccd_temperature: Optional[float] = None
+    camera_state: Optional[int] = None  # 0 = idle, 1 = waiting, 2 = exposing, 3 = reading, 4 = download, 5 = error
+    x_size: Optional[int] = None
+    y_size: Optional[int] = None
+    cooler_on: Optional[bool] = None
+    cooler_power: Optional[float] = None  # percentage 0.0
+    gain: Optional[int] = None
+    image_ready: Optional[bool] = None
+    last_exposure_duration: Optional[float] = None  # in seconds
+    last_exposure_start_time: Optional[str] = None  # FITS standard format, UTC
+    set_ccd_temperature: Optional[float] = None
+
+class FilterwheelState(BaseDeviceState):
+    device_type: Literal["filterwheel"] = "filterwheel"
+    names: Optional[list[str]] = None # list of filter names
+    position: Optional[int] = None  # current filter position, -1 = moving
+
 DeviceState = Annotated[
-    Union[DomeState, TelescopeState, ObservingConditionsState, SafetyMonitorState, CoverState, SwitchState],
+    Union[DomeState, TelescopeState, ObservingConditionsState, SafetyMonitorState, CoverState, SwitchState, CameraState, FilterwheelState],
     Field(discriminator="device_type"),
 ]
 
@@ -115,12 +136,6 @@ class StateManager:
                 return self._snapshot.devices[device_id]
             except KeyError:
                 raise ValueError(f"Device with id {device_id} does not exist.")
-            
-    def update_device(self, device: DeviceState):
-        with self._lock:
-            if device.id not in self._snapshot.devices:
-                raise ValueError(f"Device with id {device.id} does not exist.")
-            self._snapshot.devices[device.id] = device
             
     def add_action(self, text: str):
         with self._lock:

@@ -5,12 +5,12 @@ from observatory.devices.switch import ArrieroSwitch
 if TYPE_CHECKING:
     from observatory.state import StateManager
 
-def switch_updater(switch_device: "ArrieroSwitch", name, state: "StateManager" = None):
+def switch_updater(switch_device: "ArrieroSwitch", id, state: "StateManager" = None):
     if not switch_device.alpaca.Connected:
         raise ConnectionError("Switch not connected")
     
     try:
-        device = state.get_device(name)
+        device = state.get_device(id)
         device.connected = switch_device.alpaca.Connected
         
         # Update each control
@@ -19,7 +19,5 @@ def switch_updater(switch_device: "ArrieroSwitch", name, state: "StateManager" =
                 control.value = switch_device.alpaca.GetSwitch(control.id)
             elif isinstance(control, RangeControl):
                 control.value = switch_device.alpaca.GetSwitchValue(control.id)
-
-        state.update_device(device)
     except Exception as e:
         print(f"Error updating switch state: {e}")

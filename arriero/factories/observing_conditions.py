@@ -9,12 +9,12 @@ class ObservingConditionsConnectionError(RuntimeError):
 
 def observing_conditions_factory(
         address: str,
-        name: str,
+        id: str,
         device_number: int = 0,
         state: "StateManager" = None,
     ) -> observingconditions.ObservingConditions:
     try:
-        print("connecting to observing conditions", name, address)
+        print("connecting to observing conditions", id, address)
         oc = observingconditions.ObservingConditions(address, device_number)
         timeout = 0
         oc.Connect()
@@ -24,7 +24,7 @@ def observing_conditions_factory(
                     print("Observing conditions connection timed out")
                     raise ObservingConditionsConnectionError("Observing conditions connection timed out")
                 sleep(1)
-        state.add_device(ObservingConditionsState(id=name, connected=True))
+        state.add_device(ObservingConditionsState(id=id, connected=True))
         return oc
     except Exception as e:
         print(f"Error connecting to observing conditions: {e}")
