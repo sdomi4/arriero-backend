@@ -84,8 +84,9 @@ class Observatory:
                         id=did,
                         state=self.state
                     ),
+                    id=device_id,
+                    name=name,
                     poll_time=poll_time,
-                    name=name
                 )
                 self.domes[device_id] = device_arriero
             elif device_type == "telescope":
@@ -102,8 +103,9 @@ class Observatory:
                         id=did,
                         state=self.state
                     ),
-                    poll_time=poll_time,
+                    id=device_id,
                     name=name,
+                    poll_time=poll_time,
                 )
                 self.telescopes[device_id] = device_arriero
             elif device_type == "camera":
@@ -120,8 +122,9 @@ class Observatory:
                         id=did,
                         state=self.state
                     ),
-                    poll_time=poll_time,
+                    id=device_id,
                     name=name,
+                    poll_time=poll_time,
                 )
                 self.cameras[device_id] = device_arriero
             elif device_type == "observing_conditions":
@@ -138,8 +141,9 @@ class Observatory:
                         id=did,
                         state=self.state
                     ),
-                    poll_time=poll_time,
+                    id=device_id,
                     name=name,
+                    poll_time=poll_time,
                 )
                 self.observing_conditions[device_id] = device_arriero
             elif device_type == "safety_monitor":
@@ -156,8 +160,9 @@ class Observatory:
                         id=did,
                         state=self.state
                     ),
-                    poll_time=poll_time,
+                    id=device_id,
                     name=name,
+                    poll_time=poll_time,
                 )
                 self.safety_monitors[device_id] = device_arriero
             elif device_type == "cover":
@@ -174,8 +179,9 @@ class Observatory:
                         id=did,
                         state=self.state
                     ),
-                    poll_time=poll_time,
+                    id=device_id,
                     name=name,
+                    poll_time=poll_time,
                 )
                 self.covers[device_id] = device_arriero
             elif device_type == "filterwheel":
@@ -192,8 +198,9 @@ class Observatory:
                         id=did,
                         state=self.state
                     ),
-                    poll_time=poll_time,
+                    id=device_id,
                     name=name,
+                    poll_time=poll_time,
                 )
                 self.filterwheels[device_id] = device_arriero
             elif device_type == "switch":
@@ -210,8 +217,9 @@ class Observatory:
                         id=did,
                         state=self.state
                     ),
-                    poll_time=poll_time,
+                    id=device_id,
                     name=name,
+                    poll_time=poll_time,
                 )
                 self.switches[device_id] = device_arriero
             else:

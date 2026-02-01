@@ -3,11 +3,11 @@ from arriero.arriero import Arriero
 from alpaca import observingconditions
 
 class ArrieroObservingConditions(ObservatoryDevice[observingconditions.ObservingConditions]):
-    def __init__(self, observatory, factory, updater, poll_time=1, name="conditions"):
+    def __init__(self, observatory, factory, updater, id: str, name: str = None, poll_time=1):
         arriero = Arriero(
             factory,
             updater,
             poll_time=poll_time,
-            name=name,
+            name=name or id,
         )
-        super().__init__(observatory, arriero)
+        super().__init__(observatory, arriero, id=id, name=name)
