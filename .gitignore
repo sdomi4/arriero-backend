@@ -10,3 +10,5 @@ venv/
 
 # Specific files
 test.py
+
+archive/

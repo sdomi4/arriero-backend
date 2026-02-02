@@ -1,9 +1,13 @@
 from observatory.devices.base import ObservatoryDevice
 from arriero.arriero import Arriero
 from alpaca import switch
+from typing import TYPE_CHECKING, Callable
+
+if TYPE_CHECKING:
+    from observatory.observatory import Observatory
 
 class ArrieroSwitch(ObservatoryDevice[switch.Switch]):
-    def __init__(self, observatory, factory, updater, id: str, name: str = None, poll_time=1):
+    def __init__(self, observatory: "Observatory", factory: Callable[[], switch.Switch], updater: Callable[[], None], id: str, name: str = None, poll_time: float = 1):
         arriero = Arriero(
             factory,
             updater,

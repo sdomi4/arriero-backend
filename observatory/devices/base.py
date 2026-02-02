@@ -3,13 +3,14 @@ from typing import TypeVar, Generic, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from observatory.observatory import Observatory
+    from arriero.arriero import Arriero
 
 TAlpaca = TypeVar("TAlpaca")
 
 class ObservatoryDevice(ABC, Generic[TAlpaca]):
-    def __init__(self, observatory: "Observatory", arriero, id: str, name: str = None):
+    def __init__(self, observatory: "Observatory", arriero: "Arriero[TAlpaca]", id: str, name: str = None):
         self.observatory: "Observatory" = observatory
-        self.arriero = arriero
+        self.arriero: "Arriero[TAlpaca]" = arriero
         self.id = id
         self.name = name or id
 

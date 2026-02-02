@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from observatory.observatory import Observatory
 
 # import routers
-
+from routes.dome import router as dome_router
 
 
 @asynccontextmanager
@@ -15,6 +15,7 @@ async def lifespan(app: FastAPI):
     try:
         observatory = Observatory()
         observatory.startup()
+        app.state.observatory = observatory
         
     except Exception as e:
         print(f"Error during observatory startup: {e}")
@@ -22,7 +23,7 @@ async def lifespan(app: FastAPI):
     
     yield
 
-
+    app.state.observatory = None
     print("Shutting down observatory...")
 
 
@@ -36,3 +37,4 @@ app.add_middleware(
 )
 
 # Include routers
+app.include_router(dome_router)
