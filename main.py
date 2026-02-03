@@ -7,6 +7,13 @@ from observatory.observatory import Observatory
 
 # import routers
 from routes.dome import router as dome_router
+from routes.telescope import router as telescope_router
+from routes.camera import router as camera_router
+from routes.cover import router as cover_router
+from routes.filterwheel import router as filterwheel_router
+from routes.switch import router as switch_router
+from routes.observing_conditions import router as observing_conditions_router
+from routes.safety_monitor import router as safety_monitor_router
 
 
 @asynccontextmanager
@@ -38,3 +45,10 @@ app.add_middleware(
 
 # Include routers
 app.include_router(dome_router)
+app.include_router(telescope_router)
+app.include_router(camera_router)
+app.include_router(cover_router)
+app.include_router(filterwheel_router)
+app.include_router(switch_router)
+app.include_router(observing_conditions_router)
+app.include_router(safety_monitor_router)

@@ -6,7 +6,7 @@ from time import sleep
 from typing import TYPE_CHECKING, Callable
 import asyncio
 from observatory.safety import require_conditions
-from observatory.conditions import weather_is_safe
+from observatory.safety_conditions import weather_is_safe
 
 if TYPE_CHECKING:
     from observatory.observatory import Observatory

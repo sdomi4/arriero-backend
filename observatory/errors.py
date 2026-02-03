@@ -23,3 +23,9 @@ class SwitchError(ObservatoryError):
 
 class StateError(ObservatoryError):
     component: str = "state"
+
+class CameraError(ObservatoryError):
+    component: str = "camera"
+
+class FilterWheelError(ObservatoryError):
+    component: str = "filterwheel"
