@@ -1,4 +1,5 @@
 from typing import Dict
+import asyncio
 
 from observatory.devices.camera import ArrieroCamera
 from arriero.factories.camera import camera_factory
@@ -34,6 +35,7 @@ from arriero.updaters.telescope import telescope_updater
 
 from observatory.state import StateManager
 
+from observatory.status import observatory_loop
 from observatory.utils.config import load_observatory_config
 
 class Observatory:
@@ -230,4 +232,41 @@ class Observatory:
                 print("="*40, "reached auto connect for", device_type, name)
                 device_arriero.connect()
         # Start observatory loops
-        pass
+        asyncio.create_task(observatory_loop(self.state, self))
+
+    def emergency_shutdown(self):
+        print("Performing emergency shutdown procedures")
+        for telescope in self.telescopes.values():
+            try:
+                telescope.park()
+            except Exception as e:
+                print(f"Error parking telescope {telescope.name} during emergency shutdown: {e}")
+        for cover in self.covers.values():
+            try:
+                cover.close(override=True)
+            except Exception as e:
+                print(f"Error closing cover {cover.name} during emergency shutdown: {e}")
+        for dome in self.domes.values():
+            try:
+                dome.close(override=True)
+            except Exception as e:
+                print(f"Error closing dome {dome.name} during emergency shutdown: {e}")
+
+    def emergency_halt(self):
+        # TODO stop all sequences
+        print("Emergency halt triggered")
+        for telescope in self.telescopes.values():
+            try:
+                telescope.alpaca.AbortSlew()
+            except Exception as e:
+                print(f"Error aborting slew for telescope {telescope.name} during emergency halt: {e}")
+        for cover in self.covers.values():
+            try:
+                cover.alpaca.HaltCover()
+            except Exception as e:
+                print(f"Error halting cover {cover.name} during emergency halt: {e}")
+        for dome in self.domes.values():
+            try:
+                dome.alpaca.AbortSlew()
+            except Exception as e:
+                print(f"Error aborting slew for dome {dome.name} during emergency halt: {e}")

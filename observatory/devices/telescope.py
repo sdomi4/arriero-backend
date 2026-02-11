@@ -6,7 +6,7 @@ from time import sleep
 from typing import TYPE_CHECKING, Callable
 import asyncio
 from observatory.safety import require_conditions
-from observatory.safety_conditions import weather_is_safe
+from observatory.safety_conditions import *
 
 if TYPE_CHECKING:
     from observatory.observatory import Observatory
@@ -21,7 +21,7 @@ class ArrieroTelescope(ObservatoryDevice[telescope.Telescope]):
         )
         super().__init__(observatory, arriero, id=id, name=name)
 
-    @require_conditions(weather_is_safe)
+    @require_conditions(dome_is_open)
     def park(self, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
         try:
@@ -45,7 +45,7 @@ class ArrieroTelescope(ObservatoryDevice[telescope.Telescope]):
             self.observatory.state.remove_action(f"Parking {self.arriero.name}")
             raise TelescopeError(code="telescope_park_failed", message=f"Error parking telescope {self.arriero.name}: {e}")
 
-    @require_conditions(weather_is_safe)
+    @require_conditions(weather_is_safe, dome_is_open)
     def unpark(self, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
         try:
@@ -69,7 +69,7 @@ class ArrieroTelescope(ObservatoryDevice[telescope.Telescope]):
             self.observatory.state.remove_action(f"Unparking {self.arriero.name}")
             raise TelescopeError(code="telescope_unpark_failed", message=f"Error unparking telescope {self.arriero.name}: {e}")
 
-    @require_conditions(weather_is_safe)
+    @require_conditions(weather_is_safe, dome_is_open)
     def slew(self, ra: float, dec: float, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
         try:

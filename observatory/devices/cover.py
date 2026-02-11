@@ -6,7 +6,7 @@ from time import sleep
 from typing import TYPE_CHECKING, Callable
 import asyncio
 from observatory.safety import require_conditions
-from observatory.safety_conditions import weather_is_safe
+from observatory.safety_conditions import *
 
 if TYPE_CHECKING:
     from observatory.observatory import Observatory
@@ -21,7 +21,7 @@ class ArrieroCover(ObservatoryDevice[covercalibrator.CoverCalibrator]):
         )
         super().__init__(observatory, arriero, id=id, name=name)
 
-    @require_conditions(weather_is_safe)
+    @require_conditions(weather_is_safe, dome_is_open, is_dark)
     def open(self, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
         try:
@@ -51,6 +51,7 @@ class ArrieroCover(ObservatoryDevice[covercalibrator.CoverCalibrator]):
             self.observatory.state.remove_action(f"Opening {self.arriero.name}")
             raise CoverError(code="cover_open_failed", message=f"Error opening cover {self.arriero.name}: {e}")
 
+    @require_conditions(dome_is_open)
     def close(self, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
         try:
