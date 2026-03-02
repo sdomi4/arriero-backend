@@ -14,6 +14,7 @@ from routes.filterwheel import router as filterwheel_router
 from routes.switch import router as switch_router
 from routes.observing_conditions import router as observing_conditions_router
 from routes.safety_monitor import router as safety_monitor_router
+from routes.observatory import router as observatory_router
 
 
 @asynccontextmanager
@@ -52,3 +53,4 @@ app.include_router(filterwheel_router)
 app.include_router(switch_router)
 app.include_router(observing_conditions_router)
 app.include_router(safety_monitor_router)
+app.include_router(observatory_router)

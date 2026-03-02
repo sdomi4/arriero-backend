@@ -15,7 +15,7 @@ def require_conditions(*conditions):
             override: bool = bool(kwargs.pop("override", False))
 
             if not override:
-                observatory = kwargs.get("observatory")
+                observatory = kwargs.pop("observatory")
                 if not observatory and len(args) > 0:
                     from observatory.observatory import Observatory
                     from observatory.devices.base import ObservatoryDevice

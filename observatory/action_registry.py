@@ -16,3 +16,7 @@ class ActionRegistry:
         if name not in cls._actions:
             raise ValueError(f"Unknown action: {name}")
         return cls._actions[name]
+    
+    @classmethod
+    def list_actions(cls):
+        return list(cls._actions.keys())

@@ -34,6 +34,7 @@ from arriero.factories.telescope import telescope_factory
 from arriero.updaters.telescope import telescope_updater
 
 from observatory.state import StateManager
+from observatory.sequence_registry import SequenceRegistry
 
 from observatory.status import observatory_loop
 from observatory.utils.config import load_observatory_config
@@ -49,7 +50,8 @@ class Observatory:
         self.filterwheels: Dict[str, 'ArrieroFilterWheel'] = {}
         self.switches: Dict[str, 'ArrieroSwitch'] = {}
 
-        #self.rituals = RitualManager()
+
+        self.sequence_registry = SequenceRegistry()
 
         self.status = "initializing"
 
