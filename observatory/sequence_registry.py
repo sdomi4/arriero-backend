@@ -13,6 +13,9 @@ class SequenceRegistry:
     def add_sequence(self, builder: SequenceBuilder):
         self.sequences[builder.name] = builder
 
+    def list_sequences(self):
+        return list(self.sequences.keys())
+
     def run_sequence(self, observatory: 'Observatory', builder: SequenceBuilder, **params):
         context = ExecutionContext()
         # regenerate context if id is taken

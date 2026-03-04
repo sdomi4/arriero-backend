@@ -7,8 +7,9 @@ from observatory.observatory import Observatory
 from observatory import get_observatory
 
 class SequenceParser(SequenceBuilder):
-    def __init__(self, yaml_string: str, context=None):
+    def __init__(self, yaml_string: str, observatory: Observatory = None, context=None):
         self.yaml_string = yaml_string
+        self.observatory = observatory
         
         data = yaml.safe_load(yaml_string)
         name = data.get("name", "Unnamed Sequence")
@@ -47,12 +48,11 @@ class SequenceParser(SequenceBuilder):
             args = data.get("args", {})
 
             device_id = args.pop("device_id", None)
-            observatory: Observatory = get_observatory()
             if device_id:
-                device = observatory.devices[device_id]
+                device = self.observatory.devices[device_id]
 
             func = ActionRegistry.get_action(action_name)
-            bound = partial(func, observatory, **args)
+            bound = partial(func, self.observatory, **args)
 
             return Task(action_name, bound, edict)
         

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from observatory.observation_engine import ExecutionContext
 from pydantic import BaseModel, Field
 import threading
 import time
@@ -112,6 +113,7 @@ class Snapshot(BaseModel):
     schema_version: int = 1
     status: ObservatoryStatus = Field(default_factory=ObservatoryStatus)
     devices: Dict[str, DeviceState] = Field(default_factory=dict)
+    sequences: Dict[str, ExecutionContext] = Field(default_factory=dict)
 
 class StateManager:
     def __init__(self):
@@ -147,6 +149,14 @@ class StateManager:
                 self._snapshot.status.actions.remove(text)
             except ValueError:
                 pass
+
+    def add_sequence(self, context_id: str, sequence_name: str):
+        with self._lock:
+            self._snapshot.sequences[context_id] = sequence_name
+
+    def remove_sequence(self, context_id: str):
+        with self._lock:
+            self._snapshot.sequences.pop(context_id, None)
 
     def set_message(self, msg_id: str, text: str) -> None:
         with self._lock:

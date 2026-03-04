@@ -39,6 +39,8 @@ from observatory.sequence_registry import SequenceRegistry
 from observatory.status import observatory_loop
 from observatory.utils.config import load_observatory_config
 
+from observatory.utils.debug import debug_print
+
 class Observatory:
     def __init__(self):
         self.domes: Dict[str, 'ArrieroDome'] = {}
