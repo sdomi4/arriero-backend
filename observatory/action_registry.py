@@ -4,10 +4,10 @@ class ActionRegistry:
     _actions: Dict[str, Callable] = {}
 
     @classmethod
-    def register(cls, name):
+    def register(cls, name, observatory_arg=False, action_type=None):
         """Decorator to register a function"""
         def decorator(func):
-            cls._actions[name] = func
+            cls._actions[name] = (func, observatory_arg, action_type)
             return func
         return decorator
 

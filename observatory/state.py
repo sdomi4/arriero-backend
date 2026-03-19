@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from observatory.observation_engine import ExecutionContext
 from pydantic import BaseModel, Field
 import threading
 import time
@@ -113,7 +112,7 @@ class Snapshot(BaseModel):
     schema_version: int = 1
     status: ObservatoryStatus = Field(default_factory=ObservatoryStatus)
     devices: Dict[str, DeviceState] = Field(default_factory=dict)
-    sequences: Dict[str, ExecutionContext] = Field(default_factory=dict)
+    sequences: Dict[str, str] = Field(default_factory=dict)
 
 class StateManager:
     def __init__(self):

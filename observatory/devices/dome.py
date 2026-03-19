@@ -22,7 +22,7 @@ class ArrieroDome(ObservatoryDevice[dome.Dome]):
         )
         super().__init__(observatory, arriero, id=id, name=name)
 
-    @ActionRegistry.register("open_dome")
+    @ActionRegistry.register("open_dome", observatory_arg=True, action_type="device")
     @require_conditions(weather_is_safe)
     def open(self, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
@@ -49,7 +49,7 @@ class ArrieroDome(ObservatoryDevice[dome.Dome]):
                 self.observatory.state.remove_action(f"Opening {self.arriero.name} dome")
                 raise DomeError(f"Error monitoring dome {self.arriero.name} while opening: {e}")
             
-    @ActionRegistry.register("close_dome")
+    @ActionRegistry.register("close_dome", observatory_arg=False, action_type="device")
     def close(self, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
         state_device.shutter_status = self.alpaca.ShutterStatus

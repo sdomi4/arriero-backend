@@ -274,3 +274,9 @@ class Observatory:
                 dome.alpaca.AbortSlew()
             except Exception as e:
                 print(f"Error aborting slew for dome {dome.name} during emergency halt: {e}")
+
+    def get_device(self, device_id: str):
+        for device_dict in [self.domes, self.telescopes, self.cameras, self.observing_conditions, self.safety_monitors, self.covers, self.filterwheels, self.switches]:
+            if device_id in device_dict:
+                return device_dict[device_id]
+        raise ValueError(f"Device with id {device_id} not found")

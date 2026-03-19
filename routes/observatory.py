@@ -70,7 +70,7 @@ async def upload_sequence(
     content = await file.read()
     yaml_string = content.decode("utf-8")
     try:
-        parsed_builder = SequenceParser(yaml_string)
+        parsed_builder = SequenceParser(yaml_string, observatory)
         if not dry_run:
             observatory.sequence_registry.add_sequence(parsed_builder)
             return {"status": "parsed"}
