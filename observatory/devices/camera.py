@@ -1,3 +1,4 @@
+from observatory.action_registry import ActionRegistry
 from observatory.devices.base import ObservatoryDevice
 from arriero.arriero import Arriero
 from alpaca import camera
@@ -22,6 +23,7 @@ class ArrieroCamera(ObservatoryDevice[camera.Camera]):
         )
         super().__init__(observatory, arriero, id=id, name=name)
 
+    @ActionRegistry.register("cool_camera", observatory_arg=False, action_type="device")
     def cool(self, target_temp: float):
         try:
             if not self.alpaca.CoolerOn:
@@ -30,6 +32,7 @@ class ArrieroCamera(ObservatoryDevice[camera.Camera]):
         except Exception as e:
             raise CameraError(code="camera_cool_failed", message=f"Error setting camera {self.arriero.name} temperature: {e}")
 
+    @ActionRegistry.register("wait_for_camera_temperature", observatory_arg=False, action_type="device")
     def wait_for_temperature(self, timeout: int = 600):
         try:
             if not self.alpaca.CoolerOn:
@@ -53,6 +56,7 @@ class ArrieroCamera(ObservatoryDevice[camera.Camera]):
         except Exception as e:
             raise CameraError(code="camera_temperature_wait_failed", message=f"Error waiting for camera {self.arriero.name} temperature: {e}")
 
+    @ActionRegistry.register("expose_camera", observatory_arg=False, action_type="device")
     def expose(self, exposure: float, binX: int = 1, binY: int = 1, startX: int = 0, startY: int = 0):
         try:
             self.alpaca.BinX = binX
@@ -113,6 +117,7 @@ class ArrieroCamera(ObservatoryDevice[camera.Camera]):
         except Exception as e:
             raise CameraError(code="camera_expose_failed", message=f"Error exposing with camera {self.arriero.name}: {e}")
 
+    @ActionRegistry.register("create_fits", observatory_arg=False, action_type="device")
     def create_fits(self, nda, hdr, additional_headers: dict, base_path: str):
         try:
             for k, v in additional_headers.items():

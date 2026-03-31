@@ -8,6 +8,8 @@ import asyncio
 from observatory.safety import require_conditions
 from observatory.safety_conditions import *
 
+from observatory.action_registry import ActionRegistry
+
 if TYPE_CHECKING:
     from observatory.observatory import Observatory
 
@@ -21,6 +23,7 @@ class ArrieroTelescope(ObservatoryDevice[telescope.Telescope]):
         )
         super().__init__(observatory, arriero, id=id, name=name)
 
+    @ActionRegistry.register("park_telescope", observatory_arg=True, action_type="device")
     @require_conditions(dome_is_open)
     def park(self, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
@@ -45,6 +48,7 @@ class ArrieroTelescope(ObservatoryDevice[telescope.Telescope]):
             self.observatory.state.remove_action(f"Parking {self.arriero.name}")
             raise TelescopeError(code="telescope_park_failed", message=f"Error parking telescope {self.arriero.name}: {e}")
 
+    @ActionRegistry.register("unpark_telescope", observatory_arg=True, action_type="device")
     @require_conditions(weather_is_safe, dome_is_open)
     def unpark(self, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
@@ -69,6 +73,7 @@ class ArrieroTelescope(ObservatoryDevice[telescope.Telescope]):
             self.observatory.state.remove_action(f"Unparking {self.arriero.name}")
             raise TelescopeError(code="telescope_unpark_failed", message=f"Error unparking telescope {self.arriero.name}: {e}")
 
+    @ActionRegistry.register("slew_telescope", observatory_arg=True, action_type="device")
     @require_conditions(weather_is_safe, dome_is_open)
     def slew(self, ra: float, dec: float, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)

@@ -6,6 +6,8 @@ from time import sleep
 from typing import TYPE_CHECKING, Callable
 import asyncio
 
+from observatory.action_registry import ActionRegistry
+
 if TYPE_CHECKING:
     from observatory.observatory import Observatory
 
@@ -19,6 +21,7 @@ class ArrieroFilterWheel(ObservatoryDevice[filterwheel.FilterWheel]):
         )
         super().__init__(observatory, arriero, id=id, name=name)
 
+    @ActionRegistry.register("move_filterwheel", observatory_arg=False, action_type="device")
     def move(self, target_position: int):
         state_device = self.observatory.state.get_device(self.id)
         try:

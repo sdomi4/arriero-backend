@@ -3,6 +3,7 @@ import asyncio, random, string
 from asyncio import TaskGroup
 from typing import Union
 from abc import ABC, abstractmethod
+import inspect
 
 class GracefulCancellation(asyncio.CancelledError):
     pass
@@ -88,7 +89,7 @@ class Lifecycle:
     async def run(self, hook_type: str):
         if hook_type in self.hooks:
             for action in self.hooks.get(hook_type, []):
-                if asyncio.iscoroutinefunction(action):
+                if inspect.iscoroutinefunction(action):
                     await action()
                 else:
                     action()

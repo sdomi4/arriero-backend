@@ -1,31 +1,19 @@
-name: "Dome Test Time"
+name: "test"
 sequence:
-  - name: "Dome Open / Close Test"
+  - name: "Start Sequencing Engine Test"
     action: debug_print
-    args: { message: "Single Invocation Dome Test Start" }
-    
-  - name: "Opening Dome Block with wait"
-    parallel:
-      - name: "Open Dome"
-        action: open_dome
-        args: { device_id: "sim_dome" }
-        
-      - name: "Nested Sleep + Debug"
-        sequence:
-           - name: "Sleep Start"
-             action: debug_print
-             args: { message: "Sleeping for 10 seconds while dome opens..." }
-           - name: "Sleep Wait 10"
-             action: debug_sleep
-             args: { seconds: 10}
-           - name: "Sleep End"
-             action: debug_print
-             args: { message: "10 seconds elapsed." }
+    args: { message: "Beginning test sequence..." }
 
-  - name: "Close Dome"
-    action: close_dome
-    args: { device_id: "sim_dome" }
-  
-  - name: "Dome Test Complete"
+  - name: "Start Timestamp"
+    action: debug_timestamp
+
+  - name: "Repetition test:"
     action: debug_print
-    args: { message: "Dome test sequence complete." }
+    args: { message: "repeating..." }
+    repeat: 3
+    delay: 1
+
+  - name: "Post Repetition Timestamp"
+    action: debug_timestamp
+
+    

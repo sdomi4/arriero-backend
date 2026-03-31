@@ -1,6 +1,8 @@
 from abc import ABC
 from typing import TypeVar, Generic, TYPE_CHECKING
 
+from observatory.action_registry import ActionRegistry
+
 if TYPE_CHECKING:
     from observatory.observatory import Observatory
     from arriero.arriero import Arriero
@@ -18,8 +20,10 @@ class ObservatoryDevice(ABC, Generic[TAlpaca]):
     def alpaca(self) -> TAlpaca:
         return self.arriero.alpaca
     
+    @ActionRegistry.register("connect_device", observatory_arg=False, action_type="device")
     def connect(self):
         return self.arriero.create()
     
+    @ActionRegistry.register("disconnect_device", observatory_arg=False, action_type="device")
     def disconnect(self):
         self.arriero.destroy()
