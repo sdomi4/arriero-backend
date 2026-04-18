@@ -3,7 +3,7 @@ import asyncio, random, string
 from asyncio import TaskGroup
 from typing import Union
 from abc import ABC, abstractmethod
-import inspect
+import inspect, traceback
 
 class GracefulCancellation(asyncio.CancelledError):
     pass
@@ -210,6 +210,7 @@ class ParallelGroup:
                 print("Running ParallelGroup before hooks")
                 await self.lifecycle.run("before")
                 try:
+                    print(f"Task List: {self.tasks}")
                     async with TaskGroup() as tg:
                         for task in self.tasks:
                             tg.create_task(task.run())
@@ -220,8 +221,9 @@ class ParallelGroup:
                 await self.lifecycle.run("after")
                 await self.context.checkpoint()
         except Exception as e:
-            await self.lifecycle.run("on_error")
             print("Error occurred:", e)
+            traceback.print_exc()
+            await self.lifecycle.run("on_error")
             raise e
         finally:
             print("Running ParallelGroup finally hooks")
@@ -248,7 +250,6 @@ class Task:
             if action_name == '<lambda>':
                 # Try to get more info about lambda
                 try:
-                    import inspect
                     source = inspect.getsource(self.action).strip()
                     # Extract just the lambda part, remove surrounding whitespace/assignments
                     if 'lambda:' in source:

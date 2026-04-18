@@ -1,0 +1,44 @@
+name: "dometest"
+sequence:
+  - name: "Dome Open / Close Test"
+    action: debug_print
+    args: { message: "Single Invocation Dome Test Start" }
+    
+  - name: "Connect to Dome"
+    action: connect_device
+    args: { device_id: "sim_dome" }
+
+  - name: "Opening Dome Block with wait"
+    parallel:
+      - name: "Open Dome"
+        action: open_dome
+        args: { device_id: "sim_dome" }
+        
+      - name: "Nested Sleep + Debug"
+        sequence:
+           - name: "Sleep Start"
+             action: debug_print
+             args: { message: "Sleeping for 10 seconds while dome opens..." }
+           - name: "Sleep Wait 10"
+             action: debug_sleep
+             args: { seconds: 10}
+           - name: "Sleep End"
+             action: debug_print
+             args: { message: "10 seconds elapsed." }
+
+  - name: "Connect to Cover"
+    action: connect_device
+    args: { device_id: "sim_cover" }
+  
+  - name: "Open Cover"
+    action: open_cover
+    args: { device_id: "sim_cover" }
+    delay: 2
+
+  - name: "Close Dome"
+    action: close_dome
+    args: { device_id: "sim_dome" }
+  
+  - name: "Dome Test Complete"
+    action: debug_print
+    args: { message: "Dome test sequence complete." }

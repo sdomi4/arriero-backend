@@ -32,7 +32,7 @@ class ArrieroCover(ObservatoryDevice[covercalibrator.CoverCalibrator]):
             self.alpaca.OpenCover()
             
             status = self.alpaca.CoverState
-            state_device.cover_state = status
+            state_device.cover_status = status
             
             if status == 3:  # 3 = Open
                 self.observatory.state.remove_action(f"Opening {self.arriero.name}")
@@ -40,7 +40,7 @@ class ArrieroCover(ObservatoryDevice[covercalibrator.CoverCalibrator]):
             elif status == 2:  # 2 = Moving
                 for _ in range(60):
                     status = self.alpaca.CoverState
-                    state_device.cover_state = status
+                    state_device.cover_status = status
                     if status == 3:
                         self.observatory.state.remove_action(f"Opening {self.arriero.name}")
                         return
@@ -63,7 +63,7 @@ class ArrieroCover(ObservatoryDevice[covercalibrator.CoverCalibrator]):
             self.alpaca.CloseCover()
             
             status = self.alpaca.CoverState
-            state_device.cover_state = status
+            state_device.cover_status = status
             
             if status == 1:  # 1 = Closed
                 self.observatory.state.remove_action(f"Closing {self.arriero.name}")
@@ -71,7 +71,7 @@ class ArrieroCover(ObservatoryDevice[covercalibrator.CoverCalibrator]):
             elif status == 2:  # 2 = Moving
                 for _ in range(60):
                     status = self.alpaca.CoverState
-                    state_device.cover_state = status
+                    state_device.cover_status = status
                     if status == 1:
                         self.observatory.state.remove_action(f"Closing {self.arriero.name}")
                         return
