@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict, List
 import asyncio
 
 from observatory.devices.camera import ArrieroCamera
@@ -51,7 +51,7 @@ class Observatory:
         self.cameras: Dict[str, 'ArrieroCamera'] = {}
         self.filterwheels: Dict[str, 'ArrieroFilterWheel'] = {}
         self.switches: Dict[str, 'ArrieroSwitch'] = {}
-
+        self.configured_devices: List[Dict[str, Any]] = []
 
         self.sequence_registry = SequenceRegistry()
 
@@ -76,6 +76,11 @@ class Observatory:
             port = device.get("port")
             device_number = device.get("device_number")
 
+            self.configured_devices.append({
+                "type": device_type,
+                "id": device_id,
+                "name": name
+            })
             if device_type == "dome":
                 device_arriero = ArrieroDome(
                     observatory=self,

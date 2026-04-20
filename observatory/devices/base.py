@@ -1,5 +1,6 @@
 from abc import ABC
-from typing import TypeVar, Generic, TYPE_CHECKING
+import asyncio
+from typing import Any, TypeVar, Generic, TYPE_CHECKING, Callable
 
 from observatory.action_registry import ActionRegistry
 
@@ -27,3 +28,13 @@ class ObservatoryDevice(ABC, Generic[TAlpaca]):
     @ActionRegistry.register("disconnect_device", observatory_arg=False, action_type="device")
     def disconnect(self):
         self.arriero.destroy()
+
+    def dispatch_trigger(self, action: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
+        task = asyncio.create_task(asyncio.to_thread(action, *args, **kwargs))
+        task.add_done_callback(self._handle_trigger_result)
+
+    def _handle_trigger_result(self, task: "asyncio.Task[Any]") -> None:
+        try:
+            task.result()
+        except Exception as e:
+            print("oppla trigger failed:", e)

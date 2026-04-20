@@ -4,7 +4,6 @@ from alpaca import filterwheel
 from observatory.errors import FilterWheelError
 from time import sleep
 from typing import TYPE_CHECKING, Callable
-import asyncio
 
 from observatory.action_registry import ActionRegistry
 
@@ -50,5 +49,4 @@ class ArrieroFilterWheel(ObservatoryDevice[filterwheel.FilterWheel]):
             raise FilterWheelError(code="filterwheel_move_failed", message=f"Error moving filter wheel {self.arriero.name}: {e}")
 
     async def trigger_move(self, target_position: int):
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, lambda: self.move(target_position))
+        self.dispatch_trigger(self.move, target_position)

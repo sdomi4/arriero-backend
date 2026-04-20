@@ -6,7 +6,6 @@ from observatory.errors import CameraError
 from time import sleep
 import time
 from typing import TYPE_CHECKING, Callable
-import asyncio
 import numpy as np
 import astropy.io.fits as fits
 
@@ -130,8 +129,22 @@ class ArrieroCamera(ObservatoryDevice[camera.Camera]):
         except Exception as e:
             raise CameraError(code="fits_creation_failed", message=f"Error creating FITS file for camera {self.arriero.name}: {e}")
 
-    async def trigger_expose_and_save(self, exposure: float, base_path: str, binX: int = 1, binY: int = 1, additional_headers: dict = None):
-        loop = asyncio.get_event_loop()
-        nda, hdr = await loop.run_in_executor(None, lambda: self.expose(exposure, binX, binY))
-        filename = await loop.run_in_executor(None, lambda: self.create_fits(nda, hdr, additional_headers or {}, base_path))
+    @ActionRegistry.register("expose_and_save_camera", observatory_arg=False, action_type="device")
+    def expose_and_save(self, exposure: float, base_path: str, binX: int = 1, binY: int = 1, additional_headers: dict = None):
+        nda, hdr = self.expose(exposure, binX, binY)
+        filename = self.create_fits(nda, hdr, additional_headers or {}, base_path)
+        self.observatory.state.set_message(
+            f"camera_capture:{self.id}",
+            f"Image captured and saved to {filename}",
+        )
         return filename
+
+    async def trigger_expose_and_save(self, exposure: float, base_path: str, binX: int = 1, binY: int = 1, additional_headers: dict = None):
+        self.dispatch_trigger(
+            self.expose_and_save,
+            exposure,
+            base_path,
+            binX,
+            binY,
+            additional_headers,
+        )

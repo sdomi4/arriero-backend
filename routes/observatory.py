@@ -80,3 +80,9 @@ async def upload_sequence(
             return {"status": "valid", "parsed_steps": len(parsed_sequence.steps)}
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Failed to parse sequence: {e}")
+    
+
+@router.get("/devices")
+async def list_devices(observatory: Observatory = Depends(get_observatory)):
+    # in future, also expose device capabilities
+    return observatory.configured_devices

@@ -4,7 +4,6 @@ from alpaca import telescope
 from observatory.errors import TelescopeError
 from time import sleep
 from typing import TYPE_CHECKING, Callable
-import asyncio
 from observatory.safety import require_conditions
 from observatory.safety_conditions import *
 
@@ -103,13 +102,10 @@ class ArrieroTelescope(ObservatoryDevice[telescope.Telescope]):
             raise TelescopeError(code="telescope_slew_failed", message=f"Error slewing telescope {self.arriero.name}: {e}")
 
     async def trigger_park(self, override: bool = False):
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, lambda: self.park(override=override))
+        self.dispatch_trigger(self.park, override=override)
     
     async def trigger_unpark(self, override: bool = False):
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, lambda: self.unpark(override=override))
+        self.dispatch_trigger(self.unpark, override=override)
 
     async def trigger_slew(self, ra: float, dec: float, override: bool = False):
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, lambda: self.slew(ra, dec, override=override))
+        self.dispatch_trigger(self.slew, ra, dec, override=override)

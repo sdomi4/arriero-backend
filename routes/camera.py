@@ -51,13 +51,13 @@ async def capture_image(
     observatory: Observatory = Depends(get_observatory)
 ):
     try:
-        filename = await observatory.cameras[camera_id].trigger_expose_and_save(
+        await observatory.cameras[camera_id].trigger_expose_and_save(
             body.exposure,
             body.base_path,
             body.binX,
             body.binY,
             body.additional_headers
         )
-        return {"message": f"Image captured and saved to {filename}"}
+        return {"message": f"Capture started for camera {camera_id}"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error capturing image for camera {camera_id}: {e}")

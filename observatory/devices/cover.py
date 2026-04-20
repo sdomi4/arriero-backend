@@ -4,7 +4,6 @@ from alpaca import covercalibrator
 from observatory.errors import CoverError
 from time import sleep
 from typing import TYPE_CHECKING, Callable
-import asyncio
 from observatory.safety import require_conditions
 from observatory.safety_conditions import *
 
@@ -86,9 +85,7 @@ class ArrieroCover(ObservatoryDevice[covercalibrator.CoverCalibrator]):
             raise CoverError(code="cover_close_failed", message=f"Error closing cover {self.arriero.name}: {e}")
 
     async def trigger_open(self, override: bool = False):
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, lambda: self.open(override=override))
+        self.dispatch_trigger(self.open, override=override)
     
     async def trigger_close(self, override: bool = False):
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, lambda: self.close(override=override))
+        self.dispatch_trigger(self.close, override=override)

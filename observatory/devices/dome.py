@@ -5,7 +5,6 @@ from alpaca import dome
 from observatory.errors import DomeError
 from time import sleep
 from typing import TYPE_CHECKING, Callable
-import asyncio
 from observatory.safety import require_conditions
 from observatory.safety_conditions import weather_is_safe
 
@@ -76,9 +75,7 @@ class ArrieroDome(ObservatoryDevice[dome.Dome]):
                 raise DomeError(f"Error monitoring dome {self.arriero.name} while closing: {e}")
             
     async def trigger_open(self, override: bool = False):
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, lambda: self.open(override=override))
+        self.dispatch_trigger(self.open, override=override)
     
     async def trigger_close(self, override: bool = False):
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(None, lambda: self.close(override=override))
+        self.dispatch_trigger(self.close, override=override)
