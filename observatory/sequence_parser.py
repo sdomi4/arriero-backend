@@ -77,9 +77,9 @@ class SequenceParser(SequenceBuilder):
                 accepted_args["observatory"] = self.observatory
 
             if action_type == "device":
-                device_id = data.get("device_id") or args.get("device_id")
+                device_id = data.get("device") or args.get("device")
                 if not device_id:
-                    raise ValueError(f"Device action '{action_name}' requires 'device_id' argument")
+                    raise ValueError(f"Device action '{action_name}' requires 'device' argument")
                 device = self.observatory.get_device(device_id)
                 bound = partial(func, device, **accepted_args)
             else:

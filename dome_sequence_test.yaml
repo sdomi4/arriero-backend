@@ -6,13 +6,13 @@ sequence:
     
   - name: "Connect to Dome"
     action: connect_device
-    device_id: "sim_dome"
+    device: "sim_dome"
 
   - name: "Opening Dome Block with wait"
     parallel:
       - name: "Open Dome"
         action: open_dome
-        device_id: "sim_dome"
+        device: "sim_dome"
         
       - name: "Nested Sleep + Debug"
         sequence:
@@ -28,16 +28,16 @@ sequence:
 
   - name: "Connect to Cover"
     action: connect_device
-    device_id: "sim_cover"
+    device: "sim_cover"
   
   - name: "Open Cover"
     action: open_cover
-    device_id: "sim_cover"
+    device: "sim_cover"
     delay: 2
 
   - name: "Close Dome"
     action: close_dome
-    device_id: "sim_dome"
+    device: "sim_dome"
   
   - name: "Dome Test Complete"
     action: debug_print
