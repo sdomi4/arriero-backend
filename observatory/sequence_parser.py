@@ -59,21 +59,22 @@ class SequenceParser(SequenceBuilder):
             return parallel_group
         
         elif "action" in data:
+            # explicitly False out observatory_arg because i'm confused
+            _observatory_arg = False
             action_name = data["action"]
             args = dict(data.get("args", {}))
 
             func, _observatory_arg, action_type = ActionRegistry.get_action(action_name)
-            
-            print((f"Binding action '{action_name}' with func: {func}"))
+
             original = inspect.unwrap(func)
             original_signature = inspect.signature(original)
-            print((f"Original signature: {original_signature}"))
 
             accepted_args = {
                 key: value for key, value in args.items()
                 if key in original_signature.parameters
             }
             if "observatory" in original_signature.parameters:
+                print("Adding observatory to accepted args for action:", action_name)
                 accepted_args["observatory"] = self.observatory
 
             if action_type == "device":
@@ -82,6 +83,8 @@ class SequenceParser(SequenceBuilder):
                     raise ValueError(f"Device action '{action_name}' requires 'device' argument")
                 device = self.observatory.get_device(device_id)
                 bound = partial(func, device, **accepted_args)
+            elif action_type == "observatory":
+                bound = partial(func, self.observatory, **accepted_args)
             else:
                 bound = partial(func, **accepted_args)
             

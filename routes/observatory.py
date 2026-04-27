@@ -86,3 +86,7 @@ async def upload_sequence(
 async def list_devices(observatory: Observatory = Depends(get_observatory)):
     # in future, also expose device capabilities
     return observatory.configured_devices
+
+@router.get("/state")
+async def get_state(observatory: Observatory = Depends(get_observatory)):
+    return observatory.state.snapshot()

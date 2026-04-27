@@ -19,7 +19,7 @@ class ArrieroSwitch(ObservatoryDevice[switch.Switch]):
         )
         super().__init__(observatory, arriero, id=id, name=name)
 
-    @ActionRegistry.register("set_switch", observatory_arg=True, action_type="device")
+    @ActionRegistry.register("set_switch", observatory_arg=False, action_type="device")
     def set_switch(self, switch_number: int, switch_status: bool):
         try:
             self.alpaca.SetSwitch(switch_number, switch_status)

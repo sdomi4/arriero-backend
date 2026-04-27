@@ -39,6 +39,10 @@ sequence:
     action: close_dome
     device: "sim_dome"
   
+  - name: "Set Observatory Status"
+    action: set_status
+    args: { status: "running" }
+
   - name: "Dome Test Complete"
     action: debug_print
     args: { message: "Dome test sequence complete." }

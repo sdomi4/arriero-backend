@@ -1,6 +1,7 @@
 from typing import Any, Dict, List
 import asyncio
 
+from observatory.action_registry import ActionRegistry
 from observatory.devices.camera import ArrieroCamera
 from arriero.factories.camera import camera_factory
 from arriero.updaters.camera import camera_updater
@@ -285,3 +286,7 @@ class Observatory:
             if device_id in device_dict:
                 return device_dict[device_id]
         raise ValueError(f"Device with id {device_id} not found")
+    
+    @ActionRegistry.register("set_status", observatory_arg=True, action_type="observatory")
+    def set_status(self, status: str):
+        self.state.set_status(status)

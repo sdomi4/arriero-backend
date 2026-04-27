@@ -22,7 +22,7 @@ class ArrieroCover(ObservatoryDevice[covercalibrator.CoverCalibrator]):
         )
         super().__init__(observatory, arriero, id=id, name=name)
 
-    @ActionRegistry.register("open_cover", observatory_arg=True, action_type="device")
+    @ActionRegistry.register("open_cover", observatory_arg=False, action_type="device")
     @require_conditions(weather_is_safe, dome_is_open, is_dark)
     def open(self, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
@@ -53,7 +53,7 @@ class ArrieroCover(ObservatoryDevice[covercalibrator.CoverCalibrator]):
             self.observatory.state.remove_action(f"Opening {self.arriero.name}")
             raise CoverError(code="cover_open_failed", message=f"Error opening cover {self.arriero.name}: {e}")
 
-    @ActionRegistry.register("close_cover", observatory_arg=True, action_type="device")
+    @ActionRegistry.register("close_cover", observatory_arg=False, action_type="device")
     @require_conditions(dome_is_open)
     def close(self, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
