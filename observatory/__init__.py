@@ -1,10 +1,13 @@
 from fastapi import Request
 from observatory.observatory import Observatory
-from observatory.safety import set_current_observatory
+from observatory.safety import reset_current_observatory, set_current_observatory
 
 
-def get_observatory(request: Request) -> Observatory:
+async def get_observatory(request: Request) -> Observatory:
     """Dependency to get the observatory instance from app state."""
     observatory = request.app.state.observatory
-    set_current_observatory(observatory)
-    return observatory
+    token = set_current_observatory(observatory)
+    try:
+        yield observatory
+    finally:
+        reset_current_observatory(token)

@@ -60,35 +60,30 @@ class SequenceParser(SequenceBuilder):
         
         elif "action" in data:
             action_name = data["action"]
-            args = data.get("args", {})
+            args = dict(data.get("args", {}))
 
-            func, observatory_arg, action_type = ActionRegistry.get_action(action_name)
+            func, _observatory_arg, action_type = ActionRegistry.get_action(action_name)
             
             print((f"Binding action '{action_name}' with func: {func}"))
             original = inspect.unwrap(func)
             original_signature = inspect.signature(original)
             print((f"Original signature: {original_signature}"))
 
-            if observatory_arg:
-                if action_type == "device":
-                    device_id = args.pop("device_id")
-                    if not device_id:
-                        raise ValueError(f"Device action '{action_name}' requires 'device_id' argument")
-                    device = self.observatory.get_device(device_id)
-                    args["observatory"] = self.observatory
+            accepted_args = {
+                key: value for key, value in args.items()
+                if key in original_signature.parameters
+            }
+            if "observatory" in original_signature.parameters:
+                accepted_args["observatory"] = self.observatory
 
-                    bound = partial(func, device, self.observatory, **args)
-                else:
-                    bound = partial(func, self.observatory, **args)
+            if action_type == "device":
+                device_id = data.get("device_id") or args.get("device_id")
+                if not device_id:
+                    raise ValueError(f"Device action '{action_name}' requires 'device_id' argument")
+                device = self.observatory.get_device(device_id)
+                bound = partial(func, device, **accepted_args)
             else:
-                if action_type == "device":
-                    device_id = args.pop("device_id")
-                    if not device_id:
-                        raise ValueError(f"Device action '{action_name}' requires 'device_id' argument")
-                    device = self.observatory.get_device(device_id)
-                    bound = partial(func, device, **args)
-                else:
-                    bound = partial(func, **args)
+                bound = partial(func, **accepted_args)
             
             return Task(action_name, bound, context, lifecycle)
         

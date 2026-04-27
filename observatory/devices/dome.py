@@ -21,7 +21,7 @@ class ArrieroDome(ObservatoryDevice[dome.Dome]):
         )
         super().__init__(observatory, arriero, id=id, name=name)
 
-    @ActionRegistry.register("open_dome", observatory_arg=True, action_type="device")
+    @ActionRegistry.register("open_dome", observatory_arg=False, action_type="device")
     @require_conditions(weather_is_safe)
     def open(self, override: bool = False):
         state_device = self.observatory.state.get_device(self.id)
