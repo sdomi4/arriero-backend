@@ -10,6 +10,7 @@ class ObservatoryStatus(BaseModel):
     status: Literal["stopped", "initializing", "running", "error"] = "stopped"
     actions: list[str] = Field(default_factory=list)
     messages: dict[str, str] = Field(default_factory=dict)
+    sequences: list[tuple[str, str, str]] = Field(default_factory=list)  # list of (context_id, sequence_name, status)
 
 class BaseDeviceState(BaseModel):
     id: str
