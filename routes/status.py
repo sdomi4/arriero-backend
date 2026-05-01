@@ -10,7 +10,7 @@ async def state_websocket(websocket: WebSocket, observatory: Observatory = Depen
     await websocket.accept()
     try:
         while True:
-            await websocket.send_json(observatory.state.snapshot_json())
+            await websocket.send_json(observatory.state.snapshot_dict())
             await asyncio.sleep(1)
     except WebSocketDisconnect:
         pass

@@ -27,6 +27,7 @@ class ExecutionContext:
 
     def abort(self):
         self._abort.set()
+        self._gate.set()
 
     def gate_is_set(self):
         return self._gate.is_set()

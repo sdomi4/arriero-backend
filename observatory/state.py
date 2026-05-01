@@ -10,7 +10,12 @@ class ObservatoryStatus(BaseModel):
     status: Literal["stopped", "initializing", "running", "error"] = "stopped"
     actions: list[str] = Field(default_factory=list)
     messages: dict[str, str] = Field(default_factory=dict)
-    sequences: list[tuple[str, str, str]] = Field(default_factory=list)  # list of (context_id, sequence_name, status)
+
+
+class SequenceState(BaseModel):
+    context_id: str
+    sequence_name: str
+    status: str = "running"
 
 class BaseDeviceState(BaseModel):
     id: str
@@ -113,7 +118,7 @@ class Snapshot(BaseModel):
     schema_version: int = 1
     status: ObservatoryStatus = Field(default_factory=ObservatoryStatus)
     devices: Dict[str, DeviceState] = Field(default_factory=dict)
-    sequences: Dict[str, str] = Field(default_factory=dict)
+    sequences: Dict[str, SequenceState] = Field(default_factory=dict)
 
 class StateManager:
     def __init__(self):
@@ -122,7 +127,8 @@ class StateManager:
 
     def add_device(self, device: DeviceState):
         with self._lock:
-            if device.id in self._snapshot.devices:
+            existing_device = self._snapshot.devices.get(device.id)
+            if existing_device is not None and existing_device.connected:
                 raise ValueError(f"Device with id {device.id} already exists.")
             self._snapshot.devices[device.id] = device
 
@@ -136,6 +142,13 @@ class StateManager:
         with self._lock:
             try:
                 return self._snapshot.devices[device_id]
+            except KeyError:
+                raise ValueError(f"Device with id {device_id} does not exist.")
+
+    def set_device_connected(self, device_id: str, connected: bool) -> None:
+        with self._lock:
+            try:
+                self._snapshot.devices[device_id].connected = connected
             except KeyError:
                 raise ValueError(f"Device with id {device_id} does not exist.")
             
@@ -152,11 +165,21 @@ class StateManager:
 
     def add_sequence(self, context_id: str, sequence_name: str):
         with self._lock:
-            self._snapshot.sequences[context_id] = sequence_name
+            self._snapshot.sequences[context_id] = SequenceState(
+                context_id=context_id,
+                sequence_name=sequence_name,
+            )
 
     def remove_sequence(self, context_id: str):
         with self._lock:
             self._snapshot.sequences.pop(context_id, None)
+
+    def set_sequence_status(self, context_id: str, status: str):
+        with self._lock:
+            try:
+                self._snapshot.sequences[context_id].status = status
+            except KeyError:
+                raise ValueError(f"Sequence with context_id {context_id} does not exist.")
 
     def set_message(self, msg_id: str, text: str) -> None:
         with self._lock:

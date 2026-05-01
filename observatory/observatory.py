@@ -1,5 +1,6 @@
 from typing import Any, Dict, List
 import asyncio
+from pathlib import Path
 
 from observatory.action_registry import ActionRegistry
 from observatory.devices.camera import ArrieroCamera
@@ -64,6 +65,7 @@ class Observatory:
 
     def startup(self):
         config = load_observatory_config()
+        self.load_sequence_catalog()
         # Create all devices discovered in config
         for device in config.get("devices", []):
             print(device)
@@ -243,6 +245,27 @@ class Observatory:
                 device_arriero.connect()
         # Start observatory loops
         asyncio.create_task(observatory_loop(self.state, self))
+
+    def load_sequence_catalog(self, catalog_dir: Path | None = None) -> None:
+        from observatory.sequence_parser import SequenceParser
+
+        if catalog_dir is None:
+            catalog_dir = Path(__file__).resolve().parent / "sequences"
+        if not catalog_dir.exists():
+            return
+
+        sequence_paths = sorted(
+            path
+            for pattern in ("*.yaml", "*.yml")
+            for path in catalog_dir.glob(pattern)
+        )
+        for sequence_path in sequence_paths:
+            try:
+                yaml_string = sequence_path.read_text(encoding="utf-8")
+                sequence_builder = SequenceParser(yaml_string, self)
+                self.sequence_registry.add_sequence(sequence_builder)
+            except Exception as e:
+                print(f"Skipping invalid sequence file {sequence_path}: {e}")
 
     def emergency_shutdown(self):
         print("Performing emergency shutdown procedures")

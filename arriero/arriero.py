@@ -14,12 +14,14 @@ class Arriero(Generic[TAlpaca]):
             self,
             factory: Callable[[], TAlpaca],
             updater,
+            on_destroy: Callable[[], None] | None = None,
             poll_time: float = 1,
             name: str = "alpaca"
         ):
         self._alpaca: TAlpaca | None = None
         self._factory = factory
         self._updater = updater
+        self._on_destroy = on_destroy
         self._backoff = 1
         self._max_backoff = 60
         self._poll_time = poll_time
@@ -53,8 +55,26 @@ class Arriero(Generic[TAlpaca]):
         t = self._thread
         if t and t.is_alive():
             t.join(timeout=join_timeout)
+        try:
+            if self._alpaca:
+                self._alpaca.Connected = False
+        except Exception as e:
+            print(f"Error disconnecting {self.name} Alpaca device:", e)
+        finally:
+            self._notify_destroyed()
         self._thread = None
         self._alpaca = None
+
+    def set_on_destroy(self, callback: Callable[[], None] | None):
+        self._on_destroy = callback
+
+    def _notify_destroyed(self):
+        if self._on_destroy is None:
+            return
+        try:
+            self._on_destroy()
+        except Exception as e:
+            print(f"Error running {self.name} destroy callback:", e)
 
     def _run(self):
         healthy = False
@@ -81,6 +101,7 @@ class Arriero(Generic[TAlpaca]):
             except Exception as e:
                 print(f"Error in Alpaca updater: {e}")
                 traceback.print_exc()
+                self._notify_destroyed()
                 self._alpaca = None
                 healthy = False
                 self._sleep_coop(self._backoff)

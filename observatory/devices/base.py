@@ -16,6 +16,7 @@ class ObservatoryDevice(ABC, Generic[TAlpaca]):
         self.arriero: "Arriero[TAlpaca]" = arriero
         self.id = id
         self.name = name or id
+        self.arriero.set_on_destroy(self._mark_disconnected)
 
     @property
     def alpaca(self) -> TAlpaca:
@@ -28,6 +29,12 @@ class ObservatoryDevice(ABC, Generic[TAlpaca]):
     @ActionRegistry.register("disconnect_device", observatory_arg=False, action_type="device")
     def disconnect(self):
         self.arriero.destroy()
+
+    def _mark_disconnected(self) -> None:
+        try:
+            self.observatory.state.set_device_connected(self.id, False)
+        except ValueError:
+            return
 
     def dispatch_trigger(self, action: Callable[..., Any], *args: Any, **kwargs: Any) -> None:
         task = asyncio.create_task(asyncio.to_thread(action, *args, **kwargs))

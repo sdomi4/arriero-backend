@@ -4,7 +4,6 @@ from observatory.observation_engine import Sequence, ParallelGroup, Task, Sequen
 from observatory.action_registry import ActionRegistry
 from observatory.observatory import Observatory
 import inspect
-from observatory import get_observatory
 
 class SequenceParser(SequenceBuilder):
     def __init__(self, yaml_string: str, observatory: Observatory, context=None):
