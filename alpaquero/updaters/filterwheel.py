@@ -1,7 +1,7 @@
 from observatory.state import StateManager, FilterwheelState
-from observatory.devices.filterwheel import ArrieroFilterWheel
+from observatory.devices.filterwheel import AlpaqueroFilterWheel
 
-def filterwheel_updater(filterwheel: "ArrieroFilterWheel", id, state: "StateManager" = None):
+def filterwheel_updater(filterwheel: "AlpaqueroFilterWheel", id, state: "StateManager" = None):
     if not filterwheel.alpaca.Connected:
         raise ConnectionError(f"Filter wheel {id} not connected")
     

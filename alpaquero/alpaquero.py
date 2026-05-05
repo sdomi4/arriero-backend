@@ -9,7 +9,7 @@ import traceback
 
 TAlpaca = TypeVar("TAlpaca")
 
-class Arriero(Generic[TAlpaca]):
+class Alpaquero(Generic[TAlpaca]):
     def __init__(
             self,
             factory: Callable[[], TAlpaca],
@@ -46,7 +46,7 @@ class Arriero(Generic[TAlpaca]):
             print("Error creating Alpaca device:", e)
             self._alpaca = None
         self._stop.clear()
-        self._thread = threading.Thread(target=self._run, name=f"Arriero-{self.name}", daemon=True)
+        self._thread = threading.Thread(target=self._run, name=f"Alpaquero-{self.name}", daemon=True)
         self._thread.start()
         return self._alpaca
     

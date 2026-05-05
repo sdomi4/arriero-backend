@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING
 from observatory.state import StateManager, TelescopeState
-from observatory.devices.telescope import ArrieroTelescope
+from observatory.devices.telescope import AlpaqueroTelescope
 
 if TYPE_CHECKING:
     from observatory.state import StateManager
 
-def telescope_updater(telescope: "ArrieroTelescope", id, state: "StateManager" = None):
+def telescope_updater(telescope: "AlpaqueroTelescope", id, state: "StateManager" = None):
     if not telescope.alpaca.Connected:
         raise ConnectionError("Telescope not connected")
     

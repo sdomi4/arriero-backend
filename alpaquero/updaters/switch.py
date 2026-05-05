@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING
 from observatory.state import StateManager, SwitchState, ToggleControl, RangeControl
-from observatory.devices.switch import ArrieroSwitch
+from observatory.devices.switch import AlpaqueroSwitch
 
 if TYPE_CHECKING:
     from observatory.state import StateManager
 
-def switch_updater(switch_device: "ArrieroSwitch", id, state: "StateManager" = None):
+def switch_updater(switch_device: "AlpaqueroSwitch", id, state: "StateManager" = None):
     if not switch_device.alpaca.Connected:
         raise ConnectionError("Switch not connected")
     

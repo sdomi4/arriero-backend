@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING
 from observatory.state import StateManager, CoverState
-from observatory.devices.cover import ArrieroCover
+from observatory.devices.cover import AlpaqueroCover
 
 if TYPE_CHECKING:
     from observatory.state import StateManager
 
-def cover_updater(cover: "ArrieroCover", id, state: "StateManager" = None):
+def cover_updater(cover: "AlpaqueroCover", id, state: "StateManager" = None):
     if not cover.alpaca.Connected:
         raise ConnectionError("Cover calibrator not connected")
     

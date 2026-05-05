@@ -6,29 +6,29 @@ from observatory.action_registry import ActionRegistry
 
 if TYPE_CHECKING:
     from observatory.observatory import Observatory
-    from arriero.arriero import Arriero
+    from alpaquero.alpaquero import Alpaquero
 
 TAlpaca = TypeVar("TAlpaca")
 
 class ObservatoryDevice(ABC, Generic[TAlpaca]):
-    def __init__(self, observatory: "Observatory", arriero: "Arriero[TAlpaca]", id: str, name: str = None):
+    def __init__(self, observatory: "Observatory", alpaquero: "Alpaquero[TAlpaca]", id: str, name: str = None):
         self.observatory: "Observatory" = observatory
-        self.arriero: "Arriero[TAlpaca]" = arriero
+        self.alpaquero: "Alpaquero[TAlpaca]" = alpaquero
         self.id = id
         self.name = name or id
-        self.arriero.set_on_destroy(self._mark_disconnected)
+        self.alpaquero.set_on_destroy(self._mark_disconnected)
 
     @property
     def alpaca(self) -> TAlpaca:
-        return self.arriero.alpaca
+        return self.alpaquero.alpaca
     
     @ActionRegistry.register("connect_device", observatory_arg=False, action_type="device")
     def connect(self):
-        return self.arriero.create()
+        return self.alpaquero.create()
     
     @ActionRegistry.register("disconnect_device", observatory_arg=False, action_type="device")
     def disconnect(self):
-        self.arriero.destroy()
+        self.alpaquero.destroy()
 
     def _mark_disconnected(self) -> None:
         try:

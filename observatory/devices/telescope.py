@@ -1,5 +1,5 @@
 from observatory.devices.base import ObservatoryDevice
-from arriero.arriero import Arriero
+from alpaquero.alpaquero import Alpaquero
 from alpaca import telescope
 from observatory.errors import TelescopeError
 from time import sleep
@@ -12,15 +12,15 @@ from observatory.action_registry import ActionRegistry
 if TYPE_CHECKING:
     from observatory.observatory import Observatory
 
-class ArrieroTelescope(ObservatoryDevice[telescope.Telescope]):
+class AlpaqueroTelescope(ObservatoryDevice[telescope.Telescope]):
     def __init__(self, observatory: "Observatory", factory: Callable[[], telescope.Telescope], updater: Callable[[], None], id: str, name: str = None, poll_time: float = 1):
-        arriero = Arriero(
+        alpaquero = Alpaquero(
             factory,
             updater,
             poll_time=poll_time,
             name=name or id,
         )
-        super().__init__(observatory, arriero, id=id, name=name)
+        super().__init__(observatory, alpaquero, id=id, name=name)
 
     @ActionRegistry.register("park_telescope", observatory_arg=False, action_type="device")
     @require_conditions(dome_is_open)
@@ -30,22 +30,22 @@ class ArrieroTelescope(ObservatoryDevice[telescope.Telescope]):
             if self.alpaca.AtPark:
                 return
             
-            self.observatory.state.add_action(f"Parking {self.arriero.name}")
+            self.observatory.state.add_action(f"Parking {self.alpaquero.name}")
             self.alpaca.Park()
             
             for _ in range(60):
                 parked = self.alpaca.AtPark
                 state_device.parked = parked
                 if parked:
-                    self.observatory.state.remove_action(f"Parking {self.arriero.name}")
+                    self.observatory.state.remove_action(f"Parking {self.alpaquero.name}")
                     return
                 sleep(1)
             
-            self.observatory.state.remove_action(f"Parking {self.arriero.name}")
-            raise TelescopeError(code="telescope_park_timeout", message=f"Parking telescope {self.arriero.name} timed out")
+            self.observatory.state.remove_action(f"Parking {self.alpaquero.name}")
+            raise TelescopeError(code="telescope_park_timeout", message=f"Parking telescope {self.alpaquero.name} timed out")
         except Exception as e:
-            self.observatory.state.remove_action(f"Parking {self.arriero.name}")
-            raise TelescopeError(code="telescope_park_failed", message=f"Error parking telescope {self.arriero.name}: {e}")
+            self.observatory.state.remove_action(f"Parking {self.alpaquero.name}")
+            raise TelescopeError(code="telescope_park_failed", message=f"Error parking telescope {self.alpaquero.name}: {e}")
 
     @ActionRegistry.register("unpark_telescope", observatory_arg=False, action_type="device")
     @require_conditions(weather_is_safe, dome_is_open)
@@ -55,22 +55,22 @@ class ArrieroTelescope(ObservatoryDevice[telescope.Telescope]):
             if not self.alpaca.AtPark:
                 return
             
-            self.observatory.state.add_action(f"Unparking {self.arriero.name}")
+            self.observatory.state.add_action(f"Unparking {self.alpaquero.name}")
             self.alpaca.Unpark()
             
             for _ in range(60):
                 parked = self.alpaca.AtPark
                 state_device.parked = parked
                 if not parked:
-                    self.observatory.state.remove_action(f"Unparking {self.arriero.name}")
+                    self.observatory.state.remove_action(f"Unparking {self.alpaquero.name}")
                     return
                 sleep(1)
             
-            self.observatory.state.remove_action(f"Unparking {self.arriero.name}")
-            raise TelescopeError(code="telescope_unpark_timeout", message=f"Unparking telescope {self.arriero.name} timed out")
+            self.observatory.state.remove_action(f"Unparking {self.alpaquero.name}")
+            raise TelescopeError(code="telescope_unpark_timeout", message=f"Unparking telescope {self.alpaquero.name} timed out")
         except Exception as e:
-            self.observatory.state.remove_action(f"Unparking {self.arriero.name}")
-            raise TelescopeError(code="telescope_unpark_failed", message=f"Error unparking telescope {self.arriero.name}: {e}")
+            self.observatory.state.remove_action(f"Unparking {self.alpaquero.name}")
+            raise TelescopeError(code="telescope_unpark_failed", message=f"Error unparking telescope {self.alpaquero.name}: {e}")
 
     @ActionRegistry.register("slew_telescope", observatory_arg=False, action_type="device")
     @require_conditions(weather_is_safe, dome_is_open)
@@ -85,21 +85,21 @@ class ArrieroTelescope(ObservatoryDevice[telescope.Telescope]):
             self.alpaca.Tracking = True
             self.alpaca.SlewToTargetAsync()
             
-            self.observatory.state.add_action(f"Slewing {self.arriero.name} to target")
+            self.observatory.state.add_action(f"Slewing {self.alpaquero.name} to target")
             
             for _ in range(60):
                 slewing = self.alpaca.Slewing
                 state_device.slewing = slewing
                 if not slewing:
-                    self.observatory.state.remove_action(f"Slewing {self.arriero.name} to target")
+                    self.observatory.state.remove_action(f"Slewing {self.alpaquero.name} to target")
                     return
                 sleep(1)
             
-            self.observatory.state.remove_action(f"Slewing {self.arriero.name} to target")
-            raise TelescopeError(code="telescope_slew_timeout", message=f"Slewing telescope {self.arriero.name} timed out")
+            self.observatory.state.remove_action(f"Slewing {self.alpaquero.name} to target")
+            raise TelescopeError(code="telescope_slew_timeout", message=f"Slewing telescope {self.alpaquero.name} timed out")
         except Exception as e:
-            self.observatory.state.remove_action(f"Slewing {self.arriero.name} to target")
-            raise TelescopeError(code="telescope_slew_failed", message=f"Error slewing telescope {self.arriero.name}: {e}")
+            self.observatory.state.remove_action(f"Slewing {self.alpaquero.name} to target")
+            raise TelescopeError(code="telescope_slew_failed", message=f"Error slewing telescope {self.alpaquero.name}: {e}")
 
     async def trigger_park(self, override: bool = False):
         self.dispatch_trigger(self.park, override=override)

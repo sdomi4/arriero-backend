@@ -3,37 +3,37 @@ import asyncio
 from pathlib import Path
 
 from observatory.action_registry import ActionRegistry
-from observatory.devices.camera import ArrieroCamera
-from arriero.factories.camera import camera_factory
-from arriero.updaters.camera import camera_updater
+from observatory.devices.camera import AlpaqueroCamera
+from alpaquero.factories.camera import camera_factory
+from alpaquero.updaters.camera import camera_updater
 
-from observatory.devices.observing_conditions import ArrieroObservingConditions
-from arriero.factories.observing_conditions import observing_conditions_factory
-from arriero.updaters.observing_conditions import observing_conditions_updater
+from observatory.devices.observing_conditions import AlpaqueroObservingConditions
+from alpaquero.factories.observing_conditions import observing_conditions_factory
+from alpaquero.updaters.observing_conditions import observing_conditions_updater
 
-from observatory.devices.cover import ArrieroCover
-from arriero.factories.cover import cover_factory
-from arriero.updaters.cover import cover_updater
+from observatory.devices.cover import AlpaqueroCover
+from alpaquero.factories.cover import cover_factory
+from alpaquero.updaters.cover import cover_updater
 
-from observatory.devices.filterwheel import ArrieroFilterWheel
-from arriero.factories.filterwheel import filterwheel_factory
-from arriero.updaters.filterwheel import filterwheel_updater
+from observatory.devices.filterwheel import AlpaqueroFilterWheel
+from alpaquero.factories.filterwheel import filterwheel_factory
+from alpaquero.updaters.filterwheel import filterwheel_updater
 
-from observatory.devices.safety_monitor import ArrieroSafetyMonitor
-from arriero.factories.safety_monitor import safety_monitor_factory
-from arriero.updaters.safety_monitor import safety_monitor_updater
+from observatory.devices.safety_monitor import AlpaqueroSafetyMonitor
+from alpaquero.factories.safety_monitor import safety_monitor_factory
+from alpaquero.updaters.safety_monitor import safety_monitor_updater
 
-from observatory.devices.dome import ArrieroDome
-from arriero.factories.dome import dome_factory
-from arriero.updaters.dome import dome_updater
+from observatory.devices.dome import AlpaqueroDome
+from alpaquero.factories.dome import dome_factory
+from alpaquero.updaters.dome import dome_updater
 
-from observatory.devices.switch import ArrieroSwitch
-from arriero.factories.switch import switch_factory
-from arriero.updaters.switch import switch_updater
+from observatory.devices.switch import AlpaqueroSwitch
+from alpaquero.factories.switch import switch_factory
+from alpaquero.updaters.switch import switch_updater
 
-from observatory.devices.telescope import ArrieroTelescope
-from arriero.factories.telescope import telescope_factory
-from arriero.updaters.telescope import telescope_updater
+from observatory.devices.telescope import AlpaqueroTelescope
+from alpaquero.factories.telescope import telescope_factory
+from alpaquero.updaters.telescope import telescope_updater
 
 from observatory.state import StateManager
 from observatory.sequence_registry import SequenceRegistry
@@ -45,14 +45,14 @@ from observatory.utils.debug import debug_print
 
 class Observatory:
     def __init__(self):
-        self.domes: Dict[str, 'ArrieroDome'] = {}
-        self.telescopes: Dict[str, 'ArrieroTelescope'] = {}
-        self.observing_conditions: Dict[str, 'ArrieroObservingConditions'] = {}
-        self.safety_monitors: Dict[str, 'ArrieroSafetyMonitor'] = {}
-        self.covers: Dict[str, 'ArrieroCover'] = {}
-        self.cameras: Dict[str, 'ArrieroCamera'] = {}
-        self.filterwheels: Dict[str, 'ArrieroFilterWheel'] = {}
-        self.switches: Dict[str, 'ArrieroSwitch'] = {}
+        self.domes: Dict[str, 'AlpaqueroDome'] = {}
+        self.telescopes: Dict[str, 'AlpaqueroTelescope'] = {}
+        self.observing_conditions: Dict[str, 'AlpaqueroObservingConditions'] = {}
+        self.safety_monitors: Dict[str, 'AlpaqueroSafetyMonitor'] = {}
+        self.covers: Dict[str, 'AlpaqueroCover'] = {}
+        self.cameras: Dict[str, 'AlpaqueroCamera'] = {}
+        self.filterwheels: Dict[str, 'AlpaqueroFilterWheel'] = {}
+        self.switches: Dict[str, 'AlpaqueroSwitch'] = {}
         self.configured_devices: List[Dict[str, Any]] = []
 
         self.sequence_registry = SequenceRegistry()
@@ -85,7 +85,7 @@ class Observatory:
                 "name": name
             })
             if device_type == "dome":
-                device_arriero = ArrieroDome(
+                device_alpaquero = AlpaqueroDome(
                     observatory=self,
                     factory=lambda h=host, p=port, did=device_id, dn=device_number: dome_factory(
                         address=f"{h}:{p}",
@@ -102,9 +102,9 @@ class Observatory:
                     name=name,
                     poll_time=poll_time,
                 )
-                self.domes[device_id] = device_arriero
+                self.domes[device_id] = device_alpaquero
             elif device_type == "telescope":
-                device_arriero = ArrieroTelescope(
+                device_alpaquero = AlpaqueroTelescope(
                     observatory=self,
                     factory=lambda h=host, p=port, did=device_id, dn=device_number: telescope_factory(
                         address=f"{h}:{p}",
@@ -121,9 +121,9 @@ class Observatory:
                     name=name,
                     poll_time=poll_time,
                 )
-                self.telescopes[device_id] = device_arriero
+                self.telescopes[device_id] = device_alpaquero
             elif device_type == "camera":
-                device_arriero = ArrieroCamera(
+                device_alpaquero = AlpaqueroCamera(
                     observatory=self,
                     factory=lambda h=host, p=port, did=device_id, dn=device_number: camera_factory(
                         address=f"{h}:{p}",
@@ -140,9 +140,9 @@ class Observatory:
                     name=name,
                     poll_time=poll_time,
                 )
-                self.cameras[device_id] = device_arriero
+                self.cameras[device_id] = device_alpaquero
             elif device_type == "observing_conditions":
-                device_arriero = ArrieroObservingConditions(
+                device_alpaquero = AlpaqueroObservingConditions(
                     observatory=self,
                     factory=lambda h=host, p=port, did=device_id, dn=device_number: observing_conditions_factory(
                         address=f"{h}:{p}",
@@ -159,9 +159,9 @@ class Observatory:
                     name=name,
                     poll_time=poll_time,
                 )
-                self.observing_conditions[device_id] = device_arriero
+                self.observing_conditions[device_id] = device_alpaquero
             elif device_type == "safety_monitor":
-                device_arriero = ArrieroSafetyMonitor(
+                device_alpaquero = AlpaqueroSafetyMonitor(
                     observatory=self,
                     factory=lambda h=host, p=port, did=device_id, dn=device_number: safety_monitor_factory(
                         address=f"{h}:{p}",
@@ -178,9 +178,9 @@ class Observatory:
                     name=name,
                     poll_time=poll_time,
                 )
-                self.safety_monitors[device_id] = device_arriero
+                self.safety_monitors[device_id] = device_alpaquero
             elif device_type == "cover":
-                device_arriero = ArrieroCover(
+                device_alpaquero = AlpaqueroCover(
                     observatory=self,
                     factory=lambda h=host, p=port, did=device_id, dn=device_number: cover_factory(
                         address=f"{h}:{p}",
@@ -197,9 +197,9 @@ class Observatory:
                     name=name,
                     poll_time=poll_time,
                 )
-                self.covers[device_id] = device_arriero
+                self.covers[device_id] = device_alpaquero
             elif device_type == "filterwheel":
-                device_arriero = ArrieroFilterWheel(
+                device_alpaquero = AlpaqueroFilterWheel(
                     observatory=self,
                     factory=lambda h=host, p=port, did=device_id, dn=device_number: filterwheel_factory(
                         address=f"{h}:{p}",
@@ -216,9 +216,9 @@ class Observatory:
                     name=name,
                     poll_time=poll_time,
                 )
-                self.filterwheels[device_id] = device_arriero
+                self.filterwheels[device_id] = device_alpaquero
             elif device_type == "switch":
-                device_arriero = ArrieroSwitch(
+                device_alpaquero = AlpaqueroSwitch(
                     observatory=self,
                     factory=lambda h=host, p=port, did=device_id, dn=device_number: switch_factory(
                         address=f"{h}:{p}",
@@ -235,14 +235,14 @@ class Observatory:
                     name=name,
                     poll_time=poll_time,
                 )
-                self.switches[device_id] = device_arriero
+                self.switches[device_id] = device_alpaquero
             else:
                 raise ValueError(f"Unknown device type: {device_type}")
 
             
             if auto_connect:
                 print("="*40, "reached auto connect for", device_type, name)
-                device_arriero.connect()
+                device_alpaquero.connect()
         # Start observatory loops
         asyncio.create_task(observatory_loop(self.state, self))
 

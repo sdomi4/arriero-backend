@@ -1,7 +1,7 @@
 from observatory.state import StateManager, CameraState
-from observatory.devices.camera import ArrieroCamera
+from observatory.devices.camera import AlpaqueroCamera
 
-def camera_updater(camera: "ArrieroCamera", id, state: "StateManager" = None):
+def camera_updater(camera: "AlpaqueroCamera", id, state: "StateManager" = None):
     if not camera.alpaca.Connected:
         raise ConnectionError(f"Camera {id} not connected")
     

@@ -1,7 +1,7 @@
 from observatory.state import StateManager, SafetyMonitorState
-from observatory.devices.safety_monitor import ArrieroSafetyMonitor
+from observatory.devices.safety_monitor import AlpaqueroSafetyMonitor
 
-def safety_monitor_updater(safety_monitor: "ArrieroSafetyMonitor", id, state: "StateManager" = None):
+def safety_monitor_updater(safety_monitor: "AlpaqueroSafetyMonitor", id, state: "StateManager" = None):
     if not safety_monitor.alpaca.Connected:
         raise ConnectionError("Safety monitor not connected")
     

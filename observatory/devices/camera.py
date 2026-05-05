@@ -1,6 +1,6 @@
 from observatory.action_registry import ActionRegistry
 from observatory.devices.base import ObservatoryDevice
-from arriero.arriero import Arriero
+from alpaquero.alpaquero import Alpaquero
 from alpaca import camera
 from observatory.errors import CameraError
 from time import sleep
@@ -12,15 +12,15 @@ import astropy.io.fits as fits
 if TYPE_CHECKING:
     from observatory.observatory import Observatory
 
-class ArrieroCamera(ObservatoryDevice[camera.Camera]):
+class AlpaqueroCamera(ObservatoryDevice[camera.Camera]):
     def __init__(self, observatory: "Observatory", factory: Callable[[], camera.Camera], updater: Callable[[], None], id: str, name: str = None, poll_time: float = 1):
-        arriero = Arriero(
+        alpaquero = Alpaquero(
             factory,
             updater,
             poll_time=poll_time,
             name=name or id,
         )
-        super().__init__(observatory, arriero, id=id, name=name)
+        super().__init__(observatory, alpaquero, id=id, name=name)
 
     @ActionRegistry.register("cool_camera", observatory_arg=False, action_type="device")
     def cool(self, target_temp: float):
@@ -29,31 +29,31 @@ class ArrieroCamera(ObservatoryDevice[camera.Camera]):
                 self.alpaca.CoolerOn = True
             self.alpaca.SetCCDTemperature = target_temp
         except Exception as e:
-            raise CameraError(code="camera_cool_failed", message=f"Error setting camera {self.arriero.name} temperature: {e}")
+            raise CameraError(code="camera_cool_failed", message=f"Error setting camera {self.alpaquero.name} temperature: {e}")
 
     @ActionRegistry.register("wait_for_camera_temperature", observatory_arg=False, action_type="device")
     def wait_for_temperature(self, timeout: int = 600):
         try:
             if not self.alpaca.CoolerOn:
-                raise CameraError(code="cooler_not_on", message=f"Camera {self.arriero.name} cooler is not on")
+                raise CameraError(code="cooler_not_on", message=f"Camera {self.alpaquero.name} cooler is not on")
             
             start_time = time.time()
             while True:
                 current_temp = self.alpaca.CCDTemperature
                 target_temp = self.alpaca.SetCCDTemperature
-                self.observatory.state.add_action(f"Cooling {self.arriero.name}: {current_temp:.1f}C / {target_temp:.1f}C")
+                self.observatory.state.add_action(f"Cooling {self.alpaquero.name}: {current_temp:.1f}C / {target_temp:.1f}C")
                 
                 if abs(current_temp - target_temp) < 1:
-                    self.observatory.state.remove_action(f"Cooling {self.arriero.name}: {current_temp:.1f}C / {target_temp:.1f}C")
+                    self.observatory.state.remove_action(f"Cooling {self.alpaquero.name}: {current_temp:.1f}C / {target_temp:.1f}C")
                     return
                 
                 if time.time() - start_time > timeout:
-                    self.observatory.state.remove_action(f"Cooling {self.arriero.name}: {current_temp:.1f}C / {target_temp:.1f}C")
-                    raise CameraError(code="camera_cooling_timeout", message=f"Timeout waiting for camera {self.arriero.name} to reach target temperature")
+                    self.observatory.state.remove_action(f"Cooling {self.alpaquero.name}: {current_temp:.1f}C / {target_temp:.1f}C")
+                    raise CameraError(code="camera_cooling_timeout", message=f"Timeout waiting for camera {self.alpaquero.name} to reach target temperature")
                 
                 sleep(10)
         except Exception as e:
-            raise CameraError(code="camera_temperature_wait_failed", message=f"Error waiting for camera {self.arriero.name} temperature: {e}")
+            raise CameraError(code="camera_temperature_wait_failed", message=f"Error waiting for camera {self.alpaquero.name} temperature: {e}")
 
     @ActionRegistry.register("expose_camera", observatory_arg=False, action_type="device")
     def expose(self, exposure: float, binX: int = 1, binY: int = 1, startX: int = 0, startY: int = 0):
@@ -114,7 +114,7 @@ class ArrieroCamera(ObservatoryDevice[camera.Camera]):
 
             return nda, hdr
         except Exception as e:
-            raise CameraError(code="camera_expose_failed", message=f"Error exposing with camera {self.arriero.name}: {e}")
+            raise CameraError(code="camera_expose_failed", message=f"Error exposing with camera {self.alpaquero.name}: {e}")
 
     @ActionRegistry.register("create_fits", observatory_arg=False, action_type="device")
     def create_fits(self, nda, hdr, additional_headers: dict, base_path: str):
@@ -127,7 +127,7 @@ class ArrieroCamera(ObservatoryDevice[camera.Camera]):
             hdu.writeto(filename, overwrite=True)
             return filename
         except Exception as e:
-            raise CameraError(code="fits_creation_failed", message=f"Error creating FITS file for camera {self.arriero.name}: {e}")
+            raise CameraError(code="fits_creation_failed", message=f"Error creating FITS file for camera {self.alpaquero.name}: {e}")
 
     @ActionRegistry.register("expose_and_save_camera", observatory_arg=False, action_type="device")
     def expose_and_save(self, exposure: float, base_path: str, binX: int = 1, binY: int = 1, additional_headers: dict = None):

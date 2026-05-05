@@ -1,7 +1,7 @@
 from observatory.state import StateManager, DomeState
-from observatory.devices.dome import ArrieroDome
+from observatory.devices.dome import AlpaqueroDome
 
-def dome_updater(dome: "ArrieroDome", id, state: "StateManager" = None):
+def dome_updater(dome: "AlpaqueroDome", id, state: "StateManager" = None):
     if not dome.alpaca.Connected:
         raise ConnectionError("Dome not connected")
     

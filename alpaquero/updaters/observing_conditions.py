@@ -1,7 +1,7 @@
 from observatory.state import StateManager, ObservingConditionsState
-from observatory.devices.observing_conditions import ArrieroObservingConditions
+from observatory.devices.observing_conditions import AlpaqueroObservingConditions
 
-def observing_conditions_updater(observing_conditions: "ArrieroObservingConditions", id, state: "StateManager" = None):
+def observing_conditions_updater(observing_conditions: "AlpaqueroObservingConditions", id, state: "StateManager" = None):
     if not observing_conditions.alpaca.Connected:
         raise ConnectionError("Observing conditions not connected")
     
