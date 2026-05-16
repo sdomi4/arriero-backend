@@ -9,9 +9,8 @@ async def observatory_loop(state: "StateManager", observatory: "Observatory"):
     # dumb way to have all safety monitors concur for at least 5 unsafe readings sort of
     safety_threshold = 5 * observatory.safety_monitors.__len__() if observatory.safety_monitors else 5
     safety_counter = 0
+    shutdown_triggered = False
     while True:
-        shutdown_triggered = False
-
         if shutdown_triggered:
             await asyncio.sleep(1)
             pass

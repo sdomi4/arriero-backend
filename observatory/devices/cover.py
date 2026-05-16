@@ -89,3 +89,17 @@ class AlpaqueroCover(ObservatoryDevice[covercalibrator.CoverCalibrator]):
     
     async def trigger_close(self, override: bool = False):
         self.dispatch_trigger(self.close, override=override)
+    
+    @ActionRegistry.register("enable_calibrator", observatory_arg=False, action_type="device")
+    def enable_calibrator(self, brightness: int = 255):
+        try:
+            self.alpaca.CalibratorOn(brightness)
+        except Exception as e:
+            raise CoverError(code="calibrator_enable_failed", message=f"Error enabling calibrator on {self.alpaquero.name}: {e}")
+        
+    @ActionRegistry.register("disable_calibrator", observatory_arg=False, action_type="device")
+    def disable_calibrator(self):
+        try:
+            self.alpaca.CalibratorOff()
+        except Exception as e:
+            raise CoverError(code="calibrator_disable_failed", message=f"Error disabling calibrator on {self.alpaquero.name}: {e}")

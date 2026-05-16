@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 from observatory.state import StateManager, SwitchState, ToggleControl, RangeControl
 from observatory.devices.switch import AlpaqueroSwitch
+from alpaquero.factories.switch import enumerate_switch_controls
 
 if TYPE_CHECKING:
     from observatory.state import StateManager
@@ -12,6 +13,8 @@ def switch_updater(switch_device: "AlpaqueroSwitch", id, state: "StateManager" =
     try:
         device = state.get_device(id)
         device.connected = switch_device.alpaca.Connected
+        if isinstance(device, SwitchState) and len(device.controls) != switch_device.alpaca.MaxSwitch:
+            device.controls = enumerate_switch_controls(switch_device.alpaca)
         
         # Update each control
         for control_name, control in device.controls.items():

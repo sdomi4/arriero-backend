@@ -66,7 +66,9 @@ class CoverState(BaseDeviceState):
 class SwitchControlBase(BaseModel):
     id: int
     label: Optional[str] = None
+    description: Optional[str] = None
     writeable: bool = True
+    can_async: bool = False
 
 class ToggleControl(SwitchControlBase):
     control_type: Literal["toggle"] = "toggle"

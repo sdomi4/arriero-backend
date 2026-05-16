@@ -46,3 +46,24 @@ async def cover_close(
         await observatory.covers[cover_id].trigger_close(override=override)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error closing cover {cover_id}: {e}")
+
+@router.post("/{cover_id}/calibrator/on/{brightness}")
+async def cover_calibrator_on(
+    cover_id: str,
+    brightness: int,
+    observatory: Observatory = Depends(get_observatory)
+):
+    try:
+        observatory.covers[cover_id].enable_calibrator(brightness=brightness)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error enabling calibrator on cover {cover_id}: {e}")
+    
+@router.post("/{cover_id}/calibrator/off")
+async def cover_calibrator_off(
+    cover_id: str,
+    observatory: Observatory = Depends(get_observatory)
+):
+    try:
+        observatory.covers[cover_id].disable_calibrator()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error disabling calibrator on cover {cover_id}: {e}")
